@@ -111,7 +111,7 @@ class S3DISDataset(PointCloudDataset):
         # ply_path = join(self.path, self.train_path)
         npy_path = join(self.path, self.train_path)
 
-        # Proportion of validation scenes
+        # Proportion of validation scenes CHECK here to change the areas being trained/validated on
         self.cloud_names = ['Area_1', 'Area_2', 'Area_3', 'Area_4', 'Area_5', 'Area_6']
         self.all_splits = [0, 1, 2, 3, 4, 5]
         self.validation_split = 4
@@ -751,9 +751,11 @@ class S3DISDataset(PointCloudDataset):
 
                 # read ply with data
                 # data = read_ply(sub_ply_file)
-                data = read_ply(sub_npy_file)
-                sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
-                sub_labels = data['class']
+                # sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
+                # sub_labels = data['class']
+                data = np.load(sub_npy_file)
+                sub_colors = data[:,3:6]
+                sub_labels = data[:,-1]
 
                 # Read pkl with search tree
                 with open(KDTree_file, 'rb') as f:
@@ -882,9 +884,12 @@ class S3DISDataset(PointCloudDataset):
                     with open(proj_file, 'rb') as f:
                         proj_inds, labels = pickle.load(f)
                 else:
-                    data = read_ply(file_path)
-                    points = np.vstack((data['x'], data['y'], data['z'])).T
-                    labels = data['class']
+                    # data = read_ply(file_path)
+                    # points = np.vstack((data['x'], data['y'], data['z'])).T
+                    # labels = data['class']
+                    data = np.load(file_path)
+                    points = data[:,:3]
+                    labels = data[:,-1]
 
                     # Compute projection inds
                     idxs = self.input_trees[i].query(points, return_distance=False)
@@ -908,9 +913,10 @@ class S3DISDataset(PointCloudDataset):
         """
 
         # Get original points
-        data = read_ply(file_path)
-        return np.vstack((data['x'], data['y'], data['z'])).T
-
+        # data = read_ply(file_path)
+        # return np.vstack((data['x'], data['y'], data['z'])).T
+        data = np.load(file_path)
+        return np.vstack(data[:,:3])
 
 # ----------------------------------------------------------------------------------------------------------------------
 #
@@ -959,7 +965,7 @@ class S3DISSampler(Sampler):
             for label_ind, label in enumerate(self.dataset.label_values):
                 if label not in self.dataset.ignored_labels:
 
-                    # Gather indices of the points with this label in all the input clouds 
+                    # Gather indices of the points with this label in all the input clouds
                     all_label_indices = []
                     for cloud_ind, cloud_labels in enumerate(self.dataset.input_labels):
                         label_indices = np.where(np.equal(cloud_labels, label))[0]
@@ -1218,7 +1224,7 @@ class S3DISSampler(Sampler):
             expected_N = 100000
 
             # Calibration parameters. Higher means faster but can also become unstable
-            # Reduce Kp and Kd if your GP Uis small as the total number of points per batch will be smaller 
+            # Reduce Kp and Kd if your GPU is small as the total number of points per batch will be smaller CHECK GPU OOM
             low_pass_T = 100
             Kp = expected_N / 200
             Ki = 0.001 * Kp
@@ -1247,7 +1253,7 @@ class S3DISSampler(Sampler):
             # Perform calibration
             #####################
 
-            # number of batch per epoch 
+            # number of batch per epoch
             sample_batches = 999
             for epoch in range((sample_batches // self.N) + 1):
                 for batch_i, batch in enumerate(dataloader):
@@ -1367,7 +1373,7 @@ class S3DISSampler(Sampler):
                     print(line0)
 
                 print('\n**************************************************\n')
-                print('\nchosen neighbors limits: ', percentiles)
+                print('\nchosen neighbors limits: ', percentiles) # Its choosing these based off something to do with percentiles which relates to where the verbose printing turned red
                 print()
 
             # Save batch_limit dictionary

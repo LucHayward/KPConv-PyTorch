@@ -236,68 +236,71 @@ class ModelTester:
         # Start test loop
         while True:
             print('Initialize workers')
-            for i, batch in enumerate(test_loader):
+            with torch.no_grad():
+                for i, batch in enumerate(test_loader):
 
-                # New time
-                t = t[-1:]
-                t += [time.time()]
+                    # New time
+                    t = t[-1:]
+                    t += [time.time()]
 
-                if i == 0:
-                    print('Done in {:.1f}s'.format(t[1] - t[0]))
+                    if i == 0:
+                        print('Done in {:.1f}s'.format(t[1] - t[0]))
 
-                if 'cuda' in self.device.type:
-                    batch.to(self.device)
+                    if 'cuda' in self.device.type:
+                        batch.to(self.device)
 
-                # Forward pass
-                outputs = net(batch, config)
+                    # Forward pass
+                    outputs = net(batch, config)
+                    torch.cuda.empty_cache()
+                    torch.cuda.synchronize(self.device)
 
-                t += [time.time()]
+                    t += [time.time()]
 
-                # Get probs and labels
-                stacked_probs = softmax(outputs).cpu().detach().numpy()
-                s_points = batch.points[0].cpu().numpy()
-                lengths = batch.lengths[0].cpu().numpy()
-                in_inds = batch.input_inds.cpu().numpy()
-                cloud_inds = batch.cloud_inds.cpu().numpy()
-                torch.cuda.synchronize(self.device)
+                    # Get probs and labels
+                    stacked_probs = softmax(outputs).cpu().detach().numpy()
+                    s_points = batch.points[0].cpu().numpy()
+                    lengths = batch.lengths[0].cpu().numpy()
+                    in_inds = batch.input_inds.cpu().numpy()
+                    cloud_inds = batch.cloud_inds.cpu().numpy()
+                    torch.cuda.synchronize(self.device)
 
-                # Get predictions and labels per instance
-                # ***************************************
+                    # Get predictions and labels per instance
+                    # ***************************************
 
-                i0 = 0
-                for b_i, length in enumerate(lengths):
+                    i0 = 0
+                    for b_i, length in enumerate(lengths):
 
-                    # Get prediction
-                    points = s_points[i0:i0 + length]
-                    probs = stacked_probs[i0:i0 + length]
-                    inds = in_inds[i0:i0 + length]
-                    c_i = cloud_inds[b_i]
+                        # Get prediction
+                        points = s_points[i0:i0 + length]
+                        probs = stacked_probs[i0:i0 + length]
+                        inds = in_inds[i0:i0 + length]
+                        c_i = cloud_inds[b_i]
 
-                    if 0 < test_radius_ratio < 1:
-                        mask = np.sum(points ** 2, axis=1) < (test_radius_ratio * config.in_radius) ** 2
-                        inds = inds[mask]
-                        probs = probs[mask]
+                        if 0 < test_radius_ratio < 1:
+                            mask = np.sum(points ** 2, axis=1) < (test_radius_ratio * config.in_radius) ** 2
+                            inds = inds[mask]
+                            probs = probs[mask]
 
-                    # Update current probs in whole cloud
-                    self.test_probs[c_i][inds] = test_smooth * self.test_probs[c_i][inds] + (1 - test_smooth) * probs
-                    i0 += length
+                        # Update current probs in whole cloud
+                        self.test_probs[c_i][inds] = test_smooth * self.test_probs[c_i][inds] + (1 - test_smooth) * probs
+                        i0 += length
 
-                # Average timing
-                t += [time.time()]
-                if i < 2:
-                    mean_dt = np.array(t[1:]) - np.array(t[:-1])
-                else:
-                    mean_dt = 0.9 * mean_dt + 0.1 * (np.array(t[1:]) - np.array(t[:-1]))
+                    # Average timing
+                    t += [time.time()]
+                    if i < 2:
+                        mean_dt = np.array(t[1:]) - np.array(t[:-1])
+                    else:
+                        mean_dt = 0.9 * mean_dt + 0.1 * (np.array(t[1:]) - np.array(t[:-1]))
 
-                # Display
-                if (t[-1] - last_display) > 1.0:
-                    last_display = t[-1]
-                    message = 'e{:03d}-i{:04d} => {:.1f}% (timings : {:4.2f} {:4.2f} {:4.2f})'
-                    print(message.format(test_epoch, i,
-                                         100 * i / config.validation_size,
-                                         1000 * (mean_dt[0]),
-                                         1000 * (mean_dt[1]),
-                                         1000 * (mean_dt[2])))
+                    # Display
+                    if (t[-1] - last_display) > 1.0:
+                        last_display = t[-1]
+                        message = 'e{:03d}-i{:04d} => {:.1f}% (timings : {:4.2f} {:4.2f} {:4.2f})'
+                        print(message.format(test_epoch, i,
+                                             100 * i / config.validation_size,
+                                             1000 * (mean_dt[0]),
+                                             1000 * (mean_dt[1]),
+                                             1000 * (mean_dt[2])))
 
             # Update minimum od potentials
             new_min = torch.min(test_loader.dataset.min_potentials)

@@ -292,7 +292,8 @@ class KPConv(nn.Module):
         # Get all difference matrices [n_points, n_neighbors, n_kpoints, dim]
         neighbors.unsqueeze_(2)
         differences = neighbors - deformed_K_points
-
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize()
         # Get the square distances [n_points, n_neighbors, n_kpoints]
         sq_distances = torch.sum(differences ** 2, dim=3)
 

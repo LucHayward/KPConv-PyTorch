@@ -580,7 +580,7 @@ class NPM3DDataset(PointCloudDataset):
             #   input_colors *= 0
 
             # Get original height as additional feature
-            input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
+            input_features = np.hstack((input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
 
             # Stack batch
             p_list += [input_points]
@@ -1205,7 +1205,7 @@ class NPM3DSampler(Sampler):
             expected_N = 100000
 
             # Calibration parameters. Higher means faster but can also become unstable
-            # Reduce Kp and Kd if your GP Uis small as the total number of points per batch will be smaller
+            # Reduce Kp and Kd if your GPU is small as the total number of points per batch will be smaller CHECK GPU OOM
             low_pass_T = 100
             Kp = expected_N / 200
             Ki = 0.001 * Kp
@@ -1354,7 +1354,7 @@ class NPM3DSampler(Sampler):
                     print(line0)
 
                 print('\n**************************************************\n')
-                print('\nchosen neighbors limits: ', percentiles)
+                print('\nchosen neighbors limits: ', percentiles) # Its choosing these based off something to do with percentiles which relates to where the verbose printing turned red
                 print()
 
             # Save batch_limit dictionary
