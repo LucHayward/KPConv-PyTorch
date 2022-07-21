@@ -146,7 +146,7 @@ if __name__ == '__main__':
     #config.batch_num = 3
     #config.in_radius = 4
     config.validation_size = 200
-    config.input_threads = 4
+    config.input_threads = 10
 
     ##############
     # Prepare Data

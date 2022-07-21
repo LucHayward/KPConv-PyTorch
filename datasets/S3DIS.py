@@ -85,7 +85,7 @@ class S3DISDataset(PointCloudDataset):
         self.ignored_labels = np.array([])
 
         # Dataset folder
-        self.path = '/media/luc/extrassd/Data/s3dis/stanford_indoor3d'
+        self.path = '/media/luc/extrassd/Data/S3DIS/'
 
         # Type of task conducted on this dataset
         self.dataset_task = 'cloud_segmentation'
