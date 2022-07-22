@@ -302,6 +302,7 @@ class S3DISDataset(PointCloudDataset):
                 pot_points = np.array(self.pot_trees[cloud_ind].data, copy=False)
 
                 # Center point of input region
+                # THIS IS ONE POINT
                 center_point = pot_points[point_ind, :].reshape(1, -1)
 
                 # Add a small noise to center point
@@ -394,7 +395,7 @@ class S3DISDataset(PointCloudDataset):
             #    n = input_inds.shape[0]
 
         ###################
-        # Concatenate batch
+        # Concatenate batch CHECK here for changing input feature dimensions
         ###################
 
         stacked_points = np.concatenate(p_list, axis=0)

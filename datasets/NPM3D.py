@@ -406,7 +406,7 @@ class NPM3DDataset(PointCloudDataset):
             #    n = input_inds.shape[0]
 
         ###################
-        # Concatenate batch
+        # Concatenate batch CHECK here for changing input feature dimensions
         ###################
 
         stacked_points = np.concatenate(p_list, axis=0)
@@ -1240,8 +1240,7 @@ class NPM3DSampler(Sampler):
                 for batch_i, batch in enumerate(dataloader):
 
                     # Update neighborhood histogram
-                    counts = [np.sum(neighb_mat.numpy() < neighb_mat.shape[0], axis=1) for neighb_mat in
-                              batch.neighbors]
+                    counts = [np.sum(neighb_mat.numpy() < neighb_mat.shape[0], axis=1) for neighb_mat in batch.neighbors]
                     hists = [np.bincount(c, minlength=hist_n)[:hist_n] for c in counts]
                     neighb_hists += np.vstack(hists)
 
@@ -1306,8 +1305,7 @@ class NPM3DSampler(Sampler):
             if not breaking:
                 import matplotlib.pyplot as plt
 
-                print(
-                    "ERROR: It seems that the calibration have not reached convergence. Here are some plot to understand why:")
+                print("ERROR: It seems that the calibration have not reached convergence. Here are some plot to understand why:")
                 print("If you notice unstability, reduce the expected_N value")
                 print("If convergece is too slow, increase the expected_N value")
 

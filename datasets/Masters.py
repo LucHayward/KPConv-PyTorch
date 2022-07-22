@@ -74,7 +74,7 @@ class MastersDataset(PointCloudDataset):
         self.ignored_labels = np.array([])
 
         # Dataset folder
-        self.path = '/media/luc/extrassd/Data/PatrickData/Church/MastersFormat/dummy_val_all'
+        # self.path = '/media/luc/extrassd/Data/PatrickData/Church/MastersFormat/dummy_val_all'
         self.path = config.dataset_folder
 
         # Type of task conducted on this dataset
@@ -97,7 +97,6 @@ class MastersDataset(PointCloudDataset):
         self.train_path = 'original_npy'
 
         # List of files to process
-        # ply_path = join(self.path, self.train_path)
         npy_path = join(self.path, self.train_path)
 
         # Proportion of validation scenes
@@ -116,7 +115,6 @@ class MastersDataset(PointCloudDataset):
         # Stop data is not needed
         if not load_data:
             return
-
 
         ################
         # Load npy files
@@ -146,7 +144,7 @@ class MastersDataset(PointCloudDataset):
 
         # Initiate containers
         self.input_trees = []
-        self.input_colors = []
+        self.input_intensities = []
         self.input_labels = []
         self.pot_trees = []
         self.num_clouds = 0
@@ -336,7 +334,7 @@ class MastersDataset(PointCloudDataset):
 
             # Collect labels and colors
             input_points = (points[input_inds] - center_point).astype(np.float32)
-            input_colors = self.input_colors[cloud_ind][input_inds]
+            input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
             else:
@@ -350,10 +348,11 @@ class MastersDataset(PointCloudDataset):
 
             # Color augmentation
             if np.random.rand() > self.config.augment_color:
-                input_colors *= 0
+                input_intensity *= 0
 
+            # CHECK input features definition
             # Get original height as additional feature
-            input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
+            input_features = np.hstack((input_intensity, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
 
             t += [time.time()]
 
@@ -380,7 +379,7 @@ class MastersDataset(PointCloudDataset):
             #    n = input_inds.shape[0]
 
         ###################
-        # Concatenate batch
+        # Concatenate batch # CHECK feature stacked here
         ###################
 
         stacked_points = np.concatenate(p_list, axis=0)
@@ -399,7 +398,7 @@ class MastersDataset(PointCloudDataset):
             pass
         elif self.config.in_features_dim == 4:
             stacked_features = np.hstack((stacked_features, features[:, :3]))
-        elif self.config.in_features_dim == 5:
+        elif self.config.in_features_dim in {5, 2}: #Note Masters has 2, intensity and original height
             stacked_features = np.hstack((stacked_features, features))
         else:
             raise ValueError('Only accepted input dimensions are 1, 4 and 7 (without and with XYZ)')
@@ -517,6 +516,7 @@ class MastersDataset(PointCloudDataset):
             points = np.array(self.input_trees[cloud_ind].data, copy=False)
 
             # Center point of input region
+            # THIS IS ONE POINT
             center_point = points[point_ind, :].reshape(1, -1)
 
             # Add a small noise to center point
@@ -538,8 +538,9 @@ class MastersDataset(PointCloudDataset):
                 continue
 
             # Collect labels and colors
+            # NOTE Subtract the center so that its centered on the origin
             input_points = (points[input_inds] - center_point).astype(np.float32)
-            input_colors = self.input_colors[cloud_ind][input_inds]
+            input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
             else:
@@ -551,10 +552,11 @@ class MastersDataset(PointCloudDataset):
 
             # Color augmentation
             if np.random.rand() > self.config.augment_color:
-                input_colors *= 0
+                input_intensity *= 0
 
-            # Get original height as additional feature
-            input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
+            # CHECK input features here
+            # Get original height as additional feature NOTE add back the center point
+            input_features = np.hstack((input_intensity, input_points[:, 3] + center_point[:, 3])).astype(np.float32)
 
             # Stack batch
             p_list += [input_points]
@@ -579,7 +581,7 @@ class MastersDataset(PointCloudDataset):
             #    n = input_inds.shape[0]
 
         ###################
-        # Concatenate batch
+        # Concatenate batch CHECK here for changing input feature dimensions
         ###################
 
         stacked_points = np.concatenate(p_list, axis=0)
@@ -596,9 +598,10 @@ class MastersDataset(PointCloudDataset):
         stacked_features = np.ones_like(stacked_points[:, :1], dtype=np.float32)
         if self.config.in_features_dim == 1:
             pass
+
         elif self.config.in_features_dim == 4:
             stacked_features = np.hstack((stacked_features, features[:, :3]))
-        elif self.config.in_features_dim == 5:
+        elif self.config.in_features_dim in {5, 2}: # NOTE 2 is for masters, I,height
             stacked_features = np.hstack((stacked_features, features))
         else:
             raise ValueError('Only accepted input dimensions are 1, 4 and 7 (without and with XYZ)')
@@ -645,7 +648,6 @@ class MastersDataset(PointCloudDataset):
 
             # Name of the input files
             KDTree_file = join(tree_path, '{:s}_KDTree.pkl'.format(cloud_name))
-            # sub_ply_file = join(tree_path, '{:s}.ply'.format(cloud_name))
             sub_npy_file = join(tree_path, '{:s}.npy'.format(cloud_name))
 
             # Check if inputs have already been computed
@@ -653,8 +655,8 @@ class MastersDataset(PointCloudDataset):
                 print('\nFound KDTree for cloud {:s}, subsampled at {:.3f}'.format(cloud_name, dl))
 
                 data = np.load(sub_npy_file)
-                sub_colors = data[:,3:6]
-                sub_labels = data[:,-1]
+                sub_intensity = data[:, 4]
+                sub_labels = data[:, -1]
 
                 # Read pkl with search tree
                 with open(KDTree_file, 'rb') as f:
@@ -663,25 +665,20 @@ class MastersDataset(PointCloudDataset):
             else:
                 print('\nPreparing KDTree for cloud {:s}, subsampled at {:.3f}'.format(cloud_name, dl))
 
-                # Read ply file
-                # data = read_ply(file_path)
-                # points = np.vstack((data['x'], data['y'], data['z'])).T
-                # colors = np.vstack((data['red'], data['green'], data['blue'])).T
-                # labels = data['class']
                 data = np.load(file_path).astype(np.float32)
                 points = data[:, :3]
-                colors = data[:, 3:6]
-                labels = data[:, 6].astype(np.int32)
+                intensity = data[:, 3]
+                labels = data[:, 4].astype(np.int32)
 
                 # Subsample cloud
-                sub_points, sub_colors, sub_labels = grid_subsampling(points,
-                                                                      features=colors,
-                                                                      labels=labels,
-                                                                      sampleDl=dl)
+                sub_points, sub_intensity, sub_labels = grid_subsampling(points,
+                                                                         features=intensity,
+                                                                         labels=labels,
+                                                                         sampleDl=dl)
 
                 # Rescale float color and squeeze label
-                sub_colors = sub_colors / 255
-                sub_labels = np.squeeze(sub_labels)
+                # sub_colors = sub_colors / 255
+                # sub_labels = np.squeeze(sub_labels)
 
                 # Get chosen neighborhoods
                 search_tree = KDTree(sub_points, leaf_size=10)
@@ -692,20 +689,16 @@ class MastersDataset(PointCloudDataset):
                 with open(KDTree_file, 'wb') as f:
                     pickle.dump(search_tree, f)
 
-                # # Save ply
-                # write_ply(sub_ply_file,
-                #           [sub_points, sub_colors, sub_labels],
-                #           ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
-                # Save npy, we DONT structure this becaus headaches
-                joined = np.column_stack((sub_points, sub_colors, sub_labels))
+                # Save npy, we DONT structure this because headaches
+                joined = np.column_stack((sub_points, sub_intensity, sub_labels))
                 np.save(sub_npy_file, joined)
 
             # Fill data containers
             self.input_trees += [search_tree]
-            self.input_colors += [sub_colors]
+            self.input_intensities += [sub_intensity]
             self.input_labels += [sub_labels]
 
-            size = sub_colors.shape[0] * 4 * 7
+            size = sub_intensity.shape[0] * 4 * 5
             print('{:.1f} MB loaded in {:.1f}s'.format(size * 1e-6, time.time() - t0))
 
         ############################
@@ -787,8 +780,8 @@ class MastersDataset(PointCloudDataset):
                     # points = np.vstack((data['x'], data['y'], data['z'])).T
                     # labels = data['class']
                     data = np.load(file_path)
-                    points = data[:,:3]
-                    labels = data[:,-1]
+                    points = data[:, :3]
+                    labels = data[:, -1]
 
                     # Compute projection inds
                     idxs = self.input_trees[i].query(points, return_distance=False)
@@ -815,7 +808,8 @@ class MastersDataset(PointCloudDataset):
         # data = read_ply(file_path)
         # return np.vstack((data['x'], data['y'], data['z'])).T
         data = np.load(file_path)
-        return np.vstack(data[:,:3])
+        return np.vstack(data[:, :3])
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 #
@@ -1272,7 +1266,8 @@ class MastersSampler(Sampler):
                     print(line0)
 
                 print('\n**************************************************\n')
-                print('\nchosen neighbors limits: ', percentiles) # Its choosing these based off something to do with percentiles which relates to where the verbose printing turned red
+                print('\nchosen neighbors limits: ',
+                      percentiles)  # Its choosing these based off something to do with percentiles which relates to where the verbose printing turned red
                 print()
 
             # Save batch_limit dictionary
