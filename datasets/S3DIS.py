@@ -104,14 +104,12 @@ class S3DISDataset(PointCloudDataset):
         self.use_potentials = use_potentials
 
         # Path of the training files
-        # self.train_path = 'original_ply'
-        self.train_path = 'original_npy'
+        self.train_path = 'original_ply'
 
         # List of files to process
-        # ply_path = join(self.path, self.train_path)
-        npy_path = join(self.path, self.train_path)
+        ply_path = join(self.path, self.train_path)
 
-        # Proportion of validation scenes CHECK here to change the areas being trained/validated on
+        # Proportion of validation scenes
         self.cloud_names = ['Area_1', 'Area_2', 'Area_3', 'Area_4', 'Area_5', 'Area_6']
         self.all_splits = [0, 1, 2, 3, 4, 5]
         self.validation_split = 4
@@ -132,7 +130,7 @@ class S3DISDataset(PointCloudDataset):
         # Prepare ply files
         ###################
 
-        # self.prepare_S3DIS_ply()
+        self.prepare_S3DIS_ply()
 
         ################
         # Load ply files
@@ -143,12 +141,10 @@ class S3DISDataset(PointCloudDataset):
         for i, f in enumerate(self.cloud_names):
             if self.set == 'training':
                 if self.all_splits[i] != self.validation_split:
-                    # self.files += [join(ply_path, f + '.ply')]
-                    self.files += [join(npy_path, f + '.npy')]
+                    self.files += [join(ply_path, f + '.ply')]
             elif self.set in ['validation', 'test', 'ERF']:
                 if self.all_splits[i] == self.validation_split:
-                    # self.files += [join(ply_path, f + '.ply')]
-                    self.files += [join(npy_path, f + '.npy')]
+                    self.files += [join(ply_path, f + '.ply')]
             else:
                 raise ValueError('Unknown set for S3DIS data: ', self.set)
 
@@ -645,25 +641,20 @@ class S3DISDataset(PointCloudDataset):
         t0 = time.time()
 
         # Folder for the ply files
-        # ply_path = join(self.path, self.train_path)
-        # if not exists(ply_path):
-        #     makedirs(ply_path)
-        npy_path = join(self.path, self.train_path)
-        if not exists(npy_path):
-            makedirs(npy_path)
+        ply_path = join(self.path, self.train_path)
+        if not exists(ply_path):
+            makedirs(ply_path)
 
         for cloud_name in self.cloud_names:
 
             # Pass if the cloud has already been computed
-            # cloud_file = join(ply_path, cloud_name + '.ply')
-            cloud_file = join(npy_path, cloud_name + '.npy')
+            cloud_file = join(ply_path, cloud_name + '.ply')
             if exists(cloud_file):
                 continue
 
             # Get rooms of the current cloud
             cloud_folder = join(self.path, cloud_name)
-            room_folders = [join(cloud_folder, room) for room in listdir(cloud_folder) if
-                            isdir(join(cloud_folder, room))]
+            room_folders = [join(cloud_folder, room) for room in listdir(cloud_folder) if isdir(join(cloud_folder, room))]
 
             # Initiate containers
             cloud_points = np.empty((0, 3), dtype=np.float32)
@@ -742,20 +733,16 @@ class S3DISDataset(PointCloudDataset):
 
             # Name of the input files
             KDTree_file = join(tree_path, '{:s}_KDTree.pkl'.format(cloud_name))
-            # sub_ply_file = join(tree_path, '{:s}.ply'.format(cloud_name))
-            sub_npy_file = join(tree_path, '{:s}.npy'.format(cloud_name))
+            sub_ply_file = join(tree_path, '{:s}.ply'.format(cloud_name))
 
             # Check if inputs have already been computed
             if exists(KDTree_file):
                 print('\nFound KDTree for cloud {:s}, subsampled at {:.3f}'.format(cloud_name, dl))
 
                 # read ply with data
-                # data = read_ply(sub_ply_file)
-                # sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
-                # sub_labels = data['class']
-                data = np.load(sub_npy_file)
-                sub_colors = data[:,3:6]
-                sub_labels = data[:,-1]
+                data = read_ply(sub_ply_file)
+                sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
+                sub_labels = data['class']
 
                 # Read pkl with search tree
                 with open(KDTree_file, 'rb') as f:
@@ -765,14 +752,10 @@ class S3DISDataset(PointCloudDataset):
                 print('\nPreparing KDTree for cloud {:s}, subsampled at {:.3f}'.format(cloud_name, dl))
 
                 # Read ply file
-                # data = read_ply(file_path)
-                # points = np.vstack((data['x'], data['y'], data['z'])).T
-                # colors = np.vstack((data['red'], data['green'], data['blue'])).T
-                # labels = data['class']
-                data = np.load(file_path).astype(np.float32)
-                points = data[:, :3]
-                colors = data[:, 3:6]
-                labels = data[:, 6].astype(np.int32)
+                data = read_ply(file_path)
+                points = np.vstack((data['x'], data['y'], data['z'])).T
+                colors = np.vstack((data['red'], data['green'], data['blue'])).T
+                labels = data['class']
 
                 # Subsample cloud
                 sub_points, sub_colors, sub_labels = grid_subsampling(points,
@@ -793,13 +776,10 @@ class S3DISDataset(PointCloudDataset):
                 with open(KDTree_file, 'wb') as f:
                     pickle.dump(search_tree, f)
 
-                # # Save ply
-                # write_ply(sub_ply_file,
-                #           [sub_points, sub_colors, sub_labels],
-                #           ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
-                # Save npy, we DONT structure this becaus headaches
-                joined = np.column_stack((sub_points, sub_colors, sub_labels))
-                np.save(sub_npy_file, joined)
+                # Save ply
+                write_ply(sub_ply_file,
+                          [sub_points, sub_colors, sub_labels],
+                          ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
 
             # Fill data containers
             self.input_trees += [search_tree]
@@ -884,12 +864,9 @@ class S3DISDataset(PointCloudDataset):
                     with open(proj_file, 'rb') as f:
                         proj_inds, labels = pickle.load(f)
                 else:
-                    # data = read_ply(file_path)
-                    # points = np.vstack((data['x'], data['y'], data['z'])).T
-                    # labels = data['class']
-                    data = np.load(file_path)
-                    points = data[:,:3]
-                    labels = data[:,-1]
+                    data = read_ply(file_path)
+                    points = np.vstack((data['x'], data['y'], data['z'])).T
+                    labels = data['class']
 
                     # Compute projection inds
                     idxs = self.input_trees[i].query(points, return_distance=False)
@@ -913,10 +890,9 @@ class S3DISDataset(PointCloudDataset):
         """
 
         # Get original points
-        # data = read_ply(file_path)
-        # return np.vstack((data['x'], data['y'], data['z'])).T
-        data = np.load(file_path)
-        return np.vstack(data[:,:3])
+        data = read_ply(file_path)
+        return np.vstack((data['x'], data['y'], data['z'])).T
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 #
@@ -969,8 +945,7 @@ class S3DISSampler(Sampler):
                     all_label_indices = []
                     for cloud_ind, cloud_labels in enumerate(self.dataset.input_labels):
                         label_indices = np.where(np.equal(cloud_labels, label))[0]
-                        all_label_indices.append(
-                            np.vstack((np.full(label_indices.shape, cloud_ind, dtype=np.int64), label_indices)))
+                        all_label_indices.append(np.vstack((np.full(label_indices.shape, cloud_ind, dtype=np.int64), label_indices)))
 
                     # Stack them: [2, N1+N2+...]
                     all_label_indices = np.hstack(all_label_indices)
@@ -980,13 +955,11 @@ class S3DISSampler(Sampler):
                     if N_inds < random_pick_n:
                         chosen_label_inds = np.zeros((2, 0), dtype=np.int64)
                         while chosen_label_inds.shape[1] < random_pick_n:
-                            chosen_label_inds = np.hstack(
-                                (chosen_label_inds, all_label_indices[:, np.random.permutation(N_inds)]))
+                            chosen_label_inds = np.hstack((chosen_label_inds, all_label_indices[:, np.random.permutation(N_inds)]))
                         warnings.warn('When choosing random epoch indices (use_potentials=False), \
                                        class {:d}: {:s} only had {:d} available points, while we \
                                        needed {:d}. Repeating indices in the same epoch'.format(label,
-                                                                                                self.dataset.label_names[
-                                                                                                    label_ind],
+                                                                                                self.dataset.label_names[label_ind],
                                                                                                 N_inds,
                                                                                                 random_pick_n))
 
@@ -1224,7 +1197,7 @@ class S3DISSampler(Sampler):
             expected_N = 100000
 
             # Calibration parameters. Higher means faster but can also become unstable
-            # Reduce Kp and Kd if your GPU is small as the total number of points per batch will be smaller CHECK GPU OOM
+            # Reduce Kp and Kd if your GP Uis small as the total number of points per batch will be smaller
             low_pass_T = 100
             Kp = expected_N / 200
             Ki = 0.001 * Kp
@@ -1259,8 +1232,7 @@ class S3DISSampler(Sampler):
                 for batch_i, batch in enumerate(dataloader):
 
                     # Update neighborhood histogram
-                    counts = [np.sum(neighb_mat.numpy() < neighb_mat.shape[0], axis=1) for neighb_mat in
-                              batch.neighbors]
+                    counts = [np.sum(neighb_mat.numpy() < neighb_mat.shape[0], axis=1) for neighb_mat in batch.neighbors]
                     hists = [np.bincount(c, minlength=hist_n)[:hist_n] for c in counts]
                     neighb_hists += np.vstack(hists)
 
@@ -1325,8 +1297,7 @@ class S3DISSampler(Sampler):
             if not breaking:
                 import matplotlib.pyplot as plt
 
-                print(
-                    "ERROR: It seems that the calibration have not reached convergence. Here are some plot to understand why:")
+                print("ERROR: It seems that the calibration have not reached convergence. Here are some plot to understand why:")
                 print("If you notice unstability, reduce the expected_N value")
                 print("If convergece is too slow, increase the expected_N value")
 
@@ -1373,7 +1344,7 @@ class S3DISSampler(Sampler):
                     print(line0)
 
                 print('\n**************************************************\n')
-                print('\nchosen neighbors limits: ', percentiles) # Its choosing these based off something to do with percentiles which relates to where the verbose printing turned red
+                print('\nchosen neighbors limits: ', percentiles)
                 print()
 
             # Save batch_limit dictionary
