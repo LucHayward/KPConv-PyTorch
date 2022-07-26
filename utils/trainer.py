@@ -23,6 +23,7 @@
 
 
 # Basic libs
+import sklearn.metrics
 import torch
 import torch.nn as nn
 import numpy as np
@@ -131,10 +132,23 @@ class ModelTrainer:
         # Initialization
         ################
 
+        def _save_batch_vis(batch, outputs=None):
+            lengths = np.cumsum(batch.lengths[0].detach().cpu().numpy())[:-1]
+            points = batch.points[0].detach().cpu().numpy()
+            labels = batch.labels.detach().cpu().numpy()
+            if outputs is not None:
+                outputs = torch.argmax(outputs.data, dim=1).detach().cpu().numpy()
+                result = np.array_split(np.column_stack((points, labels, outputs)), lengths)
+                np.save('points', result)
+            else:
+                result = np.array_split(np.column_stack((points, labels)), lengths)
+                np.save('points', result)
+            return result
+
         if config.saving:
             # Training log file
             with open(join(config.saving_path, 'training.txt'), "w") as file:
-                file.write('epochs steps out_loss offset_loss train_accuracy time\n')
+                file.write('epochs steps out_loss offset_loss train_accuracy, train_f1, time\n')
 
             # Killing file (simply delete this file when you want to stop the training)
             PID_file = join(config.saving_path, 'running_PID.txt')
@@ -164,6 +178,7 @@ class ModelTrainer:
                 remove(PID_file)
 
             self.step = 0
+            results = []
             for batch in training_loader:
 
                 # Check kill signal (running_PID.txt deleted)
@@ -188,18 +203,20 @@ class ModelTrainer:
                 outputs = net(batch, config)
                 loss = net.loss(outputs, batch.labels)
                 acc = net.accuracy(outputs, batch.labels)
-
+                f1 = net.f1(outputs, batch.labels)
+                # _save_batch_vis(batch,outputs)
+                results.append([batch.input_inds.detach().cpu().numpy(), batch.labels.detach().cpu().numpy(),
+                                torch.argmax(outputs.data, dim=1).cpu().numpy()])
                 t += [time.time()]
 
                 # Backward + optimize
                 loss.backward()
 
                 if config.grad_clip_norm > 0:
-                    #torch.nn.utils.clip_grad_norm_(net.parameters(), config.grad_clip_norm)
+                    # torch.nn.utils.clip_grad_norm_(net.parameters(), config.grad_clip_norm)
                     torch.nn.utils.clip_grad_value_(net.parameters(), config.grad_clip_norm)
                 self.optimizer.step()
 
-                
                 torch.cuda.empty_cache()
                 torch.cuda.synchronize(self.device)
 
@@ -214,10 +231,10 @@ class ModelTrainer:
                 # Console display (only one per second)
                 if (t[-1] - last_display) > 1.0:
                     last_display = t[-1]
-                    message = 'e{:03d}-i{:04d} => L={:.3f} acc={:3.0f}% / t(ms): {:5.1f} {:5.1f} {:5.1f})'
+                    message = 'e{:03d}-i{:04d} => L={:.3f} acc={:3.0f}% f1 = {:3.0f}% / t(ms): {:5.1f} {:5.1f} {:5.1f})'
                     print(message.format(self.epoch, self.step,
                                          loss.item(),
-                                         100*acc,
+                                         100 * acc, 100 * f1,
                                          1000 * mean_dt[0],
                                          1000 * mean_dt[1],
                                          1000 * mean_dt[2]))
@@ -225,20 +242,30 @@ class ModelTrainer:
                 # Log file
                 if config.saving:
                     with open(join(config.saving_path, 'training.txt'), "a") as file:
-                        message = '{:d} {:d} {:.3f} {:.3f} {:.3f} {:.3f}\n'
+                        message = '{:d} {:d} {:.3f} {:.3f} {:.3f} {:.3f} {:.3f}\n'
                         file.write(message.format(self.epoch,
                                                   self.step,
                                                   net.output_loss,
                                                   net.reg_loss,
-                                                  acc,
+                                                  acc, f1,
                                                   t[-1] - t0))
-
 
                 self.step += 1
 
             ##############
             # End of epoch
             ##############
+
+            def _save_results(results):
+                results = np.hstack(results)
+                p_idxs, u_idxs = np.unique(results[0], return_index=True)
+
+                pts = training_loader.dataset.input_trees[0].data.base[p_idxs]
+                prds = results[2, u_idxs]
+                lbls = results[1, u_idxs]
+                np.save('results', np.column_stack([pts, lbls, prds]))
+
+            _save_results(results)
 
             # Check kill signal (running_PID.txt deleted)
             if config.saving and not exists(PID_file):
@@ -368,7 +395,7 @@ class ModelTrainer:
         # Voting validation
         ###################
 
-        self.val_probs[obj_inds] = val_smooth * self.val_probs[obj_inds] + (1-val_smooth) * probs
+        self.val_probs[obj_inds] = val_smooth * self.val_probs[obj_inds] + (1 - val_smooth) * probs
 
         ############
         # Confusions
@@ -385,7 +412,6 @@ class ModelTrainer:
         C2 = fast_confusion(val_loader.dataset.input_labels,
                             np.argmax(self.val_probs, axis=1),
                             validation_labels)
-
 
         # Saving (optionnal)
         if config.saving:
@@ -438,8 +464,8 @@ class ModelTrainer:
         # Number of classes predicted by the model
         nc_model = config.num_classes
 
-        #print(nc_tot)
-        #print(nc_model)
+        # print(nc_tot)
+        # print(nc_model)
 
         # Initiate global prediction over validation clouds
         if not hasattr(self, 'validation_probs'):
@@ -463,7 +489,6 @@ class ModelTrainer:
         t = [time.time()]
         last_display = time.time()
         mean_dt = np.zeros(1)
-
 
         t1 = time.time()
 
@@ -493,7 +518,6 @@ class ModelTrainer:
 
             i0 = 0
             for b_i, length in enumerate(lengths):
-
                 # Get prediction
                 target = labels[i0:i0 + length]
                 probs = stacked_probs[i0:i0 + length]
@@ -538,7 +562,6 @@ class ModelTrainer:
             # Confusions
             Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
 
-
         t3 = time.time()
 
         # Sum all confusions
@@ -551,8 +574,8 @@ class ModelTrainer:
                 C = np.delete(C, l_ind, axis=1)
 
         # Balance with real validation proportions
+        # Multiply actual_neg (top row) and actual_pos by proportion in dataset. I have no idea why this is here
         C *= np.expand_dims(self.val_proportions / (np.sum(C, axis=1) + 1e-6), 1)
-
 
         t4 = time.time()
 
@@ -593,8 +616,8 @@ class ModelTrainer:
                     pot_name = join(pot_path, cloud_name)
                     pots = val_loader.dataset.potentials[i].numpy().astype(np.float32)
                     write_ply(pot_name,
-                            [pot_points.astype(np.float32), pots],
-                            ['x', 'y', 'z', 'pots'])
+                              [pot_points.astype(np.float32), pots],
+                              ['x', 'y', 'z', 'pots'])
 
         t6 = time.time()
 
@@ -673,7 +696,7 @@ class ModelTrainer:
         softmax = torch.nn.Softmax(1)
 
         # Create folder for validation predictions
-        if not exists (join(config.saving_path, 'val_preds')):
+        if not exists(join(config.saving_path, 'val_preds')):
             makedirs(join(config.saving_path, 'val_preds'))
 
         # initiate the dataset validation containers
@@ -695,7 +718,6 @@ class ModelTrainer:
         t = [time.time()]
         last_display = time.time()
         mean_dt = np.zeros(1)
-
 
         t1 = time.time()
 
@@ -800,7 +822,6 @@ class ModelTrainer:
         # Confusions for our subparts of validation set
         Confs = np.zeros((len(predictions), nc_tot, nc_tot), dtype=np.int32)
         for i, (preds, truth) in enumerate(zip(predictions, targets)):
-
             # Confusions
             Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
 
@@ -899,38 +920,3 @@ class ModelTrainer:
             print('\n************************\n')
 
         return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

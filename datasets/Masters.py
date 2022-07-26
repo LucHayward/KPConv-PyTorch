@@ -94,7 +94,7 @@ class MastersDataset(PointCloudDataset):
         self.use_potentials = use_potentials
 
         # Path of the training files
-        self.train_path = 'original_npy'
+        self.train_path = ''
 
         # List of files to process
         npy_path = join(self.path, self.train_path)
@@ -398,7 +398,7 @@ class MastersDataset(PointCloudDataset):
             pass
         elif self.config.in_features_dim == 4:
             stacked_features = np.hstack((stacked_features, features[:, :3]))
-        elif self.config.in_features_dim in {5, 2}: #Note Masters has 2, intensity and original height
+        elif self.config.in_features_dim in {5, 3}: #Note Masters has 3, intensity and original height
             stacked_features = np.hstack((stacked_features, features))
         else:
             raise ValueError('Only accepted input dimensions are 1, 4 and 7 (without and with XYZ)')
@@ -655,8 +655,8 @@ class MastersDataset(PointCloudDataset):
                 print('\nFound KDTree for cloud {:s}, subsampled at {:.3f}'.format(cloud_name, dl))
 
                 data = np.load(sub_npy_file)
-                sub_intensity = data[:, 4]
-                sub_labels = data[:, -1]
+                sub_intensity = data[:, 3].reshape(-1,1) # Expected as a 2D array
+                sub_labels = data[:, 4].astype(np.int32)
 
                 # Read pkl with search tree
                 with open(KDTree_file, 'rb') as f:
@@ -667,7 +667,7 @@ class MastersDataset(PointCloudDataset):
 
                 data = np.load(file_path).astype(np.float32)
                 points = data[:, :3]
-                intensity = data[:, 3]
+                intensity = data[:, 3].reshape(-1,1) # Expected as a 2D array
                 labels = data[:, 4].astype(np.int32)
 
                 # Subsample cloud
@@ -678,7 +678,7 @@ class MastersDataset(PointCloudDataset):
 
                 # Rescale float color and squeeze label
                 # sub_colors = sub_colors / 255
-                # sub_labels = np.squeeze(sub_labels)
+                sub_labels = np.squeeze(sub_labels)
 
                 # Get chosen neighborhoods
                 search_tree = KDTree(sub_points, leaf_size=10)
@@ -755,7 +755,7 @@ class MastersDataset(PointCloudDataset):
         self.num_clouds = len(self.input_trees)
 
         # Only necessary for validation and test sets
-        if self.set in ['validation', 'test']:
+        if self.set in ['validate', 'test']:
 
             print('\nPreparing reprojection indices for testing')
 

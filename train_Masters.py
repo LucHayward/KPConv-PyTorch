@@ -62,7 +62,7 @@ class MastersConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 4
+    input_threads = 0
 
     #########################
     # Architecture definition
@@ -146,7 +146,7 @@ class MastersConfig(Config):
 
     # Choice of input features
     first_features_dim = 128
-    in_features_dim = 2
+    in_features_dim = 3
 
     # Can the network learn modulations
     modulated = False
@@ -203,7 +203,7 @@ class MastersConfig(Config):
     #   > 'batch': Each cloud in the batch has the same contribution (points are weighted according cloud sizes)
     segloss_balance = 'none'
 
-    # Do we nee to save convergence
+    # Do we need to save convergence
     saving = True
     saving_path = None
 
@@ -271,8 +271,13 @@ if __name__ == '__main__':
         config.saving_path = sys.argv[1]
 
     # Initialize datasets
-    training_dataset = MastersDataset(config, set='training', use_potentials=True)
-    test_dataset = MastersDataset(config, set='validation', use_potentials=True)
+    training_dataset = MastersDataset(config, set='train', use_potentials=True)
+    test_dataset = MastersDataset(config, set='validate', use_potentials=True)
+    class_weights, _ = np.histogram(training_dataset.input_labels, np.arange(training_dataset.label_values.max()+2))
+    class_weights = class_weights / np.sum(class_weights)
+    class_weights = np.amax(class_weights) / class_weights
+    # Cube root of labelweights has log-like effect for when labels are very imbalanced
+    config.class_w = np.power(class_weights, 1 / 3)
 
     # Initialize samplers
     training_sampler = MastersSampler(training_dataset)

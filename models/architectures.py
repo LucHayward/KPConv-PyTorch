@@ -374,6 +374,10 @@ class KPFCNN(nn.Module):
         # Combined loss
         return self.output_loss + self.reg_loss
 
+    def f1(self, outputs, labels):
+        from sklearn.metrics  import f1_score
+        return f1_score(labels.detach().cpu().numpy(), torch.argmax(outputs.data, dim=1).detach().cpu().numpy())
+
     def accuracy(self, outputs, labels):
         """
         Computes accuracy of the current batch
