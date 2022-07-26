@@ -126,16 +126,20 @@ class MastersConfig(Config):
     # Radius of the input sphere (decrease value to reduce memory cost)
     in_radius = 1.2
 
-    # Size of the first subsampling grid in meter (increase value to reduce memory cost)
+    # Size of the first subsampling grid in meters (increase value to reduce memory cost)
+    # Reducing this on denser datasets allow shapes with finer details. Should also reduce in_radius to compensate.
+    # Will be better on small objects but could be worse on very big objects. If you want big objects and have very
+    # dense data consider that it may not be useful and a higher first_subsampling_dl and in_radius could be used.
     first_subsampling_dl = 0.03
 
-    # Radius of convolution in "number grid cell". (2.5 is the standard value)
+    # Radius of convolution/neighbourhood (for rigid KPConv) in "number grid cell". (2.5 is the standard value)
+    # e.g. 2.5*0.03 = 7.5cm
     conv_radius = 2.5
 
     # Radius of deformable convolution in "number grid cell". Larger so that deformed kernel can spread out
     deform_radius = 5.0
 
-    # Radius of the area of influence of each kernel point in "number grid cell". (1.0 is the standard value)
+    # Radius of the area of influence of each kernel point in "number grid cell". (1.0 is the standard value) σ in paper
     KP_extent = 1.2
 
     # Behavior of convolutions in ('constant', 'linear', 'gaussian')
@@ -232,7 +236,7 @@ if __name__ == '__main__':
 
     # Choose here if you want to start training from a previous snapshot (None for new training)
     # previous_training_path = 'Log_2020-03-19_19-53-27'
-    previous_training_path = ''
+    previous_training_path = None
 
     # Choose index of checkpoint to start from. If None, uses the latest chkp
     chkp_idx = None
@@ -271,7 +275,7 @@ if __name__ == '__main__':
         config.saving_path = sys.argv[1]
 
     # Initialize datasets
-    training_dataset = MastersDataset(config, set='train', use_potentials=True)
+    training_dataset = MastersDataset(config, set='train', use_potentials=False)
     test_dataset = MastersDataset(config, set='validate', use_potentials=True)
     class_weights, _ = np.histogram(training_dataset.input_labels, np.arange(training_dataset.label_values.max()+2))
     class_weights = class_weights / np.sum(class_weights)

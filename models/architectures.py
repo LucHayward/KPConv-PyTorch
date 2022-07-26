@@ -363,7 +363,7 @@ class KPFCNN(nn.Module):
         # Cross entropy loss
         self.output_loss = self.criterion(outputs, target)
 
-        # Regularization of deformable offsets
+        # Regularization of deformable offsets, only happens if you actually have deformable layers.
         if self.deform_fitting_mode == 'point2point':
             self.reg_loss = p2p_fitting_regularizer(self)
         elif self.deform_fitting_mode == 'point2plane':
