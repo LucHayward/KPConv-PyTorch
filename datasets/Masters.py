@@ -191,6 +191,7 @@ class MastersDataset(PointCloudDataset):
             self.min_potentials = None
             self.argmin_potentials = None
             self.epoch_inds = torch.from_numpy(np.zeros((2, self.epoch_n), dtype=np.int64))
+            # self.epoch_inds = torch.from_numpy(np.zeros((2, 300), dtype=np.int64))
             self.epoch_i = torch.from_numpy(np.zeros((1,), dtype=np.int64))
             self.epoch_i.share_memory_()
             self.epoch_inds.share_memory_()
@@ -282,11 +283,12 @@ class MastersDataset(PointCloudDataset):
                 cloud_ind = int(torch.argmin(self.min_potentials))
                 point_ind = int(self.argmin_potentials[cloud_ind])
 
+                # Don't do this because the noise on the center point is saved in the underlying tree data
                 # Get potential points from tree structure
-                pot_points = np.array(self.pot_trees[cloud_ind].data, copy=False)
+                # pot_points = np.array(self.pot_trees[cloud_ind].data, copy=False)
 
                 # Center point of input region
-                center_point = pot_points[point_ind, :].reshape(1, -1)
+                center_point = self.pot_trees[cloud_ind].data.base[point_ind, :].reshape(1, -1)
 
                 # Add a small noise to center point
                 if self.set != 'ERF':
@@ -325,15 +327,18 @@ class MastersDataset(PointCloudDataset):
 
             # Safe check for empty spheres
             if n < 2:
+                print(f"DEBUG: Empty Sphere...\n"
+                      f"{center_point=}, {self.config.in_radius=}\n"
+                      f"{input_inds=}\n")
                 failed_attempts += 1
                 if failed_attempts > 100 * self.config.batch_num:
-                    raise ValueError('It seems this dataset only containes empty input spheres')
+                    raise ValueError('It seems this dataset only contains empty input spheres')
                 t += [time.time()]
                 t += [time.time()]
                 continue
 
             # Collect labels and colors
-            input_points = (points[input_inds] - center_point).astype(np.float32)
+            input_points = (self.input_trees[cloud_ind].data.base[input_inds] - center_point).astype(np.float32)
             input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
@@ -351,7 +356,7 @@ class MastersDataset(PointCloudDataset):
                 input_intensity *= 0
 
             # CHECK input features definition
-            # Get original height as additional feature
+            # Get original height as additional feature NOTE add back the center point
             input_features = np.hstack((input_intensity, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
 
             t += [time.time()]
@@ -512,12 +517,13 @@ class MastersDataset(PointCloudDataset):
                 if self.epoch_i >= int(self.epoch_inds.shape[1]):
                     self.epoch_i -= int(self.epoch_inds.shape[1])
 
+            # Don't do this because the noise on the center point is saved in the underlying tree data
             # Get points from tree structure
-            points = np.array(self.input_trees[cloud_ind].data, copy=False)
+            # points = np.array(self.input_trees[cloud_ind].data, copy=False)
 
             # Center point of input region
             # THIS IS ONE POINT
-            center_point = points[point_ind, :].reshape(1, -1)
+            center_point = self.input_trees[cloud_ind].data.base[point_ind, :].copy().reshape(1, -1)
 
             # Add a small noise to center point
             if self.set != 'ERF':
@@ -537,9 +543,9 @@ class MastersDataset(PointCloudDataset):
                     raise ValueError('It seems this dataset only containes empty input spheres')
                 continue
 
-            # Collect labels and colors
-            # NOTE Subtract the center so that its centered on the origin
-            input_points = (points[input_inds] - center_point).astype(np.float32)
+            # Collect points (from underlying array now as copy), labels and colors
+            # NOTE Subtract the center so that its centered on the origin (plus some noise)
+            input_points = (self.input_trees[cloud_ind].data.base[input_inds] - center_point).astype(np.float32)
             input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
@@ -556,7 +562,7 @@ class MastersDataset(PointCloudDataset):
 
             # CHECK input features here
             # Get original height as additional feature NOTE add back the center point
-            input_features = np.hstack((input_intensity, input_points[:, 3] + center_point[:, 3])).astype(np.float32)
+            input_features = np.hstack((input_intensity, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
 
             # Stack batch
             p_list += [input_points]
@@ -598,10 +604,9 @@ class MastersDataset(PointCloudDataset):
         stacked_features = np.ones_like(stacked_points[:, :1], dtype=np.float32)
         if self.config.in_features_dim == 1:
             pass
-
         elif self.config.in_features_dim == 4:
             stacked_features = np.hstack((stacked_features, features[:, :3]))
-        elif self.config.in_features_dim in {5, 2}: # NOTE 2 is for masters, I,height
+        elif self.config.in_features_dim in {5, 3}: #Note Masters has 3, intensity and original height
             stacked_features = np.hstack((stacked_features, features))
         else:
             raise ValueError('Only accepted input dimensions are 1, 4 and 7 (without and with XYZ)')
@@ -827,7 +832,7 @@ class MastersSampler(Sampler):
         self.dataset = dataset
 
         # Number of step per epoch
-        if dataset.set == 'training':
+        if dataset.set == 'train':
             self.N = dataset.config.epoch_steps
         else:
             self.N = dataset.config.validation_size

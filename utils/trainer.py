@@ -23,7 +23,6 @@
 
 
 # Basic libs
-import sklearn.metrics
 import torch
 import torch.nn as nn
 import numpy as np
@@ -33,6 +32,9 @@ from os import makedirs, remove
 from os.path import exists, join
 import time
 import sys
+
+from sklearn.metrics import confusion_matrix, f1_score, jaccard_score, accuracy_score
+from scipy.stats import mode
 
 # PLY reader
 from utils.ply import read_ply, write_ply
@@ -190,8 +192,8 @@ class ModelTrainer:
                 ##################
 
                 # New time
-                t = t[-1:]
-                t += [time.time()]
+                t = t[-1:]  # previous time
+                t += [time.time()]  # start time
 
                 if 'cuda' in self.device.type:
                     batch.to(self.device)
@@ -207,7 +209,7 @@ class ModelTrainer:
                 # _save_batch_vis(batch,outputs)
                 results.append([batch.input_inds.detach().cpu().numpy(), batch.labels.detach().cpu().numpy(),
                                 torch.argmax(outputs.data, dim=1).cpu().numpy()])
-                t += [time.time()]
+                t += [time.time()]  # Forward pass time
 
                 # Backward + optimize
                 loss.backward()
@@ -220,7 +222,7 @@ class ModelTrainer:
                 torch.cuda.empty_cache()
                 torch.cuda.synchronize(self.device)
 
-                t += [time.time()]
+                t += [time.time()]  # backward pass time
 
                 # Average timing
                 if self.step < 2:
@@ -547,21 +549,31 @@ class ModelTrainer:
 
         t2 = time.time()
 
-        # Confusions for our subparts of validation set
-        Confs = np.zeros((len(predictions), nc_tot, nc_tot), dtype=np.int32)
-        for i, (probs, truth) in enumerate(zip(predictions, targets)):
+        # # Confusions for our subparts of validation set
+        # Confs = np.zeros((len(predictions), nc_tot, nc_tot), dtype=np.int32)
+        # for i, (probs, truth) in enumerate(zip(predictions, targets)):
+        #
+        #     # Insert false columns for ignored labels
+        #     for l_ind, label_value in enumerate(val_loader.dataset.label_values):
+        #         if label_value in val_loader.dataset.ignored_labels:
+        #             probs = np.insert(probs, l_ind, 0, axis=1)
+        #
+        #     # Predicted labels
+        #     preds = val_loader.dataset.label_values[np.argmax(probs, axis=1)]
+        #
+        #     # Confusions
+        #     Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
 
-            # Insert false columns for ignored labels
-            for l_ind, label_value in enumerate(val_loader.dataset.label_values):
-                if label_value in val_loader.dataset.ignored_labels:
-                    probs = np.insert(probs, l_ind, 0, axis=1)
-
-            # Predicted labels
-            preds = val_loader.dataset.label_values[np.argmax(probs, axis=1)]
-
-            # Confusions
-            Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
-
+        # Convert ground truth and prediction labels
+        # TODO check if the confusions (tpfn), f1 and IoUs are the same as Confs,_f1 and IoUs
+        targets = np.hstack(targets)
+        preds = np.vstack(predictions)
+        preds = val_loader.dataset.label_values[np.argmax(preds, axis=1)]
+        tn, fp, fn, tp = confusion_matrix(targets, preds).ravel()
+        f1 = f1_score(targets, preds)
+        keepIoU, discardIoU = jaccard_score(targets, preds, average=None)
+        mIoU = jaccard_score(targets, preds, average='macro')
+        accuracy = accuracy_score(targets, preds)
         t3 = time.time()
 
         # Sum all confusions
@@ -592,7 +604,7 @@ class ModelTrainer:
 
             # Line to write:
             line = ''
-            for IoU in IoUs:
+            for IoU in [keepIoU, discardIoU]:
                 line += '{:.3f} '.format(IoU)
             line = line + '\n'
 
