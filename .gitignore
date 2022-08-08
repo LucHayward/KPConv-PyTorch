@@ -16,3 +16,10 @@ __pycache__/
 
 # C extensions
 *.so
+/.polyscope.ini
+/imgui.ini
+/.idea/KPConv-PyTorch.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/wandb/

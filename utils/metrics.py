@@ -23,6 +23,8 @@
 
 
 # Basic libs
+from statistics import mean
+
 import numpy as np
 
 
@@ -45,9 +47,9 @@ def fast_confusion(true, pred, label_values=None):
     true = np.squeeze(true).astype(np.int32)
     pred = np.squeeze(pred).astype(np.int32)
     if len(true.shape) != 1:
-        raise ValueError('Truth values are stored in a {:d}D array instead of 1D array'. format(len(true.shape)))
+        raise ValueError('Truth values are stored in a {:d}D array instead of 1D array'.format(len(true.shape)))
     if len(pred.shape) != 1:
-        raise ValueError('Prediction values are stored in a {:d}D array instead of 1D array'. format(len(pred.shape)))
+        raise ValueError('Prediction values are stored in a {:d}D array instead of 1D array'.format(len(pred.shape)))
     # if true.dtype not in [np.int32, np.int64]:
     #     raise ValueError(f'Truth values are {true.dtype} instead of int32 or int64')
     # if pred.dtype not in [np.int32, np.int64]:
@@ -72,11 +74,11 @@ def fast_confusion(true, pred, label_values=None):
     # Get the number of classes
     num_classes = len(label_values)
 
-    #print(num_classes)
-    #print(label_values)
-    #print(np.max(true))
-    #print(np.max(pred))
-    #print(np.max(true * num_classes + pred))
+    # print(num_classes)
+    # print(label_values)
+    # print(np.max(true))
+    # print(np.max(pred))
+    # print(np.max(true * num_classes + pred))
 
     # Start confusion computations
     if label_values[0] == 0 and label_values[-1] == num_classes - 1:
@@ -85,10 +87,10 @@ def fast_confusion(true, pred, label_values=None):
         vec_conf = np.bincount(true * num_classes + pred)
 
         # Add possible missing values due to classes not being in pred or true
-        #print(vec_conf.shape)
+        # print(vec_conf.shape)
         if vec_conf.shape[0] < num_classes ** 2:
             vec_conf = np.pad(vec_conf, (0, num_classes ** 2 - vec_conf.shape[0]), 'constant')
-        #print(vec_conf.shape)
+        # print(vec_conf.shape)
 
         # Reshape confusion in a matrix
         return vec_conf.reshape((num_classes, num_classes))
@@ -117,6 +119,7 @@ def fast_confusion(true, pred, label_values=None):
 
         # Reshape confusion in a matrix
         return vec_conf.reshape((num_classes, num_classes))
+
 
 def metrics(confusions, ignore_unclassified=False):
     """
@@ -201,12 +204,11 @@ def smooth_metrics(confusions, smooth_n=0, ignore_unclassified=False):
     return PRE, REC, F1, IoU, ACC
 
 
-def IoU_from_confusions(confusions):
+def IoU_from_confusions(confusions, calculate_f1=False):
     """
     Computes IoU from confusion matrices.
     :param confusions: ([..., n_c, n_c] np.int32). Can be any dimension, the confusion matrices should be described by
     the last axes. n_c = number of classes
-    :param ignore_unclassified: (bool). True if the the first class should be ignored in the results
     :return: ([..., n_c] np.float32) IoU score
     """
 
@@ -227,4 +229,7 @@ def IoU_from_confusions(confusions):
     # If class is absent, place mIoU in place of 0 IoU to get the actual mean later
     IoU += mask * mIoU
 
+    if calculate_f1:
+        f1 = TP / (TP + 0.5 * (TP_plus_FP + TP_plus_FN - 2 * TP))
+        return IoU, mean(f1)
     return IoU

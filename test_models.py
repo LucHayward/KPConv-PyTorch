@@ -29,6 +29,7 @@ import sys
 import torch
 
 # Dataset
+from datasets.Masters import MastersCollate, MastersSampler, MastersDataset
 from datasets.ModelNet40 import *
 from datasets.S3DIS import *
 from datasets.SemanticKitti import *
@@ -146,7 +147,7 @@ if __name__ == '__main__':
     #config.batch_num = 3
     #config.in_radius = 4
     config.validation_size = 200
-    config.input_threads = 10
+    config.input_threads = 0
 
     ##############
     # Prepare Data
@@ -174,6 +175,10 @@ if __name__ == '__main__':
         test_dataset = SemanticKittiDataset(config, set=set, balance_classes=False)
         test_sampler = SemanticKittiSampler(test_dataset)
         collate_fn = SemanticKittiCollate
+    elif config.dataset == 'Masters':
+        test_dataset = MastersDataset(config, set='validation', use_potentials=True)
+        test_sampler = MastersSampler(test_dataset)
+        collate_fn = MastersCollate
     else:
         raise ValueError('Unsupported dataset : ' + config.dataset)
 

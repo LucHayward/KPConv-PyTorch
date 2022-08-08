@@ -24,6 +24,7 @@
 # Common libs
 import signal
 import os
+import wandb
 
 # Dataset
 from datasets.Masters import *
@@ -53,7 +54,7 @@ class MastersConfig(Config):
     dataset = 'Masters'
 
     # Dataset folder
-    dataset_folder = '/media/luc/extrassd/Data/PatrickData/Church/MastersFormat/hand_selected_50%KPConv'
+    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -63,6 +64,10 @@ class MastersConfig(Config):
 
     # Number of CPU threads for the input pipeline
     input_threads = 0
+
+    # Active Learning
+    active_learning = False
+    al_repeats = 5
 
     #########################
     # Architecture definition
@@ -190,7 +195,7 @@ class MastersConfig(Config):
     validation_size = 50
 
     # Number of epoch between each checkpoint
-    checkpoint_gap = 50
+    checkpoint_gap = 5
 
     # Augmentations
     augment_scale_anisotropic = True
@@ -219,6 +224,10 @@ class MastersConfig(Config):
 #
 
 if __name__ == '__main__':
+    # Initialise wandb
+    os.environ["WANDB_MODE"] = "dryrun"
+    wandb.init(project="kpconv")
+    wandb.run.log_code("./train_Masters.py")
 
     ############################
     # Initialize the environment
@@ -236,7 +245,7 @@ if __name__ == '__main__':
 
     # Choose here if you want to start training from a previous snapshot (None for new training)
     # previous_training_path = 'Log_2020-03-19_19-53-27'
-    previous_training_path = None
+    previous_training_path = ''
 
     # Choose index of checkpoint to start from. If None, uses the latest chkp
     chkp_idx = None
@@ -275,7 +284,7 @@ if __name__ == '__main__':
         config.saving_path = sys.argv[1]
 
     # Initialize datasets
-    training_dataset = MastersDataset(config, set='train', use_potentials=False)
+    training_dataset = MastersDataset(config, set='train', use_potentials=False) # Don't use potentials if imbalanced
     test_dataset = MastersDataset(config, set='validate', use_potentials=True)
     class_weights, _ = np.histogram(training_dataset.input_labels, np.arange(training_dataset.label_values.max()+2))
     class_weights = class_weights / np.sum(class_weights)
@@ -300,6 +309,7 @@ if __name__ == '__main__':
                              collate_fn=MastersCollate,
                              num_workers=config.input_threads,
                              pin_memory=True)
+    print(f"{len(training_loader)=}\n{len(test_loader)=}")
 
     # Calibrate samplers
     training_sampler.calibration(training_loader, verbose=True)
@@ -329,6 +339,8 @@ if __name__ == '__main__':
         print("Model size %i" % sum(param.numel() for param in net.parameters() if param.requires_grad))
         print('\n*************************************\n')
 
+    wandb.config.update(config)
+    print("Config:\n", config.vars())
     # Define a trainer class
     trainer = ModelTrainer(net, config, chkp_path=chosen_chkp)
     print('Done in {:.1f}s\n'.format(time.time() - t1))

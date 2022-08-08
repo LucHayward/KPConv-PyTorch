@@ -76,6 +76,7 @@ class MastersDataset(PointCloudDataset):
         # Dataset folder
         # self.path = '/media/luc/extrassd/Data/PatrickData/Church/MastersFormat/dummy_val_all'
         self.path = config.dataset_folder
+        print(f"{set} path = {self.path}")
 
         # Type of task conducted on this dataset
         self.dataset_task = 'cloud_segmentation'
@@ -313,8 +314,8 @@ class MastersDataset(PointCloudDataset):
 
             t += [time.time()]
 
-            # Get points from tree structure
-            points = np.array(self.input_trees[cloud_ind].data, copy=False)
+            # Get points from tree structure, this is going to be all our points for a given cloud
+            # points = np.array(self.input_trees[cloud_ind].data, copy=False)
 
             # Indices of points in input region
             input_inds = self.input_trees[cloud_ind].query_radius(center_point,
@@ -328,6 +329,7 @@ class MastersDataset(PointCloudDataset):
             # Safe check for empty spheres
             if n < 2:
                 print(f"DEBUG: Empty Sphere...\n"
+                      f"{self.pot_trees[cloud_ind].data.base[point_ind, :].reshape(1, -1)=}\n"
                       f"{center_point=}, {self.config.in_radius=}\n"
                       f"{input_inds=}\n")
                 failed_attempts += 1

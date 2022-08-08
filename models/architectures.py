@@ -19,7 +19,6 @@ import numpy as np
 
 
 def p2p_fitting_regularizer(net):
-
     fitting_loss = 0
     repulsive_loss = 0
 
@@ -96,7 +95,6 @@ class KPCNN(nn.Module):
                                                 layer,
                                                 config))
 
-
             # Index of block in this layer
             block_in_layer += 1
 
@@ -105,7 +103,6 @@ class KPCNN(nn.Module):
                 in_dim = out_dim // 2
             else:
                 in_dim = out_dim
-
 
             # Detect change to a subsampled layer
             if 'pool' in block or 'strided' in block:
@@ -233,11 +230,11 @@ class KPFCNN(nn.Module):
 
             # Apply the good block function defining tf ops
             self.encoder_blocks.append(block_decider(block,
-                                                    r,
-                                                    in_dim,
-                                                    out_dim,
-                                                    layer,
-                                                    config))
+                                                     r,
+                                                     in_dim,
+                                                     out_dim,
+                                                     layer,
+                                                     config))
 
             # Update dimension of input from output
             if 'simple' in block:
@@ -277,11 +274,11 @@ class KPFCNN(nn.Module):
 
             # Apply the good block function defining tf ops
             self.decoder_blocks.append(block_decider(block,
-                                                    r,
-                                                    in_dim,
-                                                    out_dim,
-                                                    layer,
-                                                    config))
+                                                     r,
+                                                     in_dim,
+                                                     out_dim,
+                                                     layer,
+                                                     config))
 
             # Update dimension of input from output
             in_dim = out_dim
@@ -319,7 +316,7 @@ class KPFCNN(nn.Module):
 
         return
 
-    def forward(self, batch, config):
+    def forward(self, batch, config, do_AL=False):
 
         # Get input features
         x = batch.features.clone().detach()
@@ -338,9 +335,17 @@ class KPFCNN(nn.Module):
 
         # Head of network
         x = self.head_mlp(x, batch)
-        x = self.head_softmax(x, batch)
+        xs = []
+        if do_AL: # Add dropout to induce randomness for active learning.
+            from torch.nn.functional import dropout
+            for i in range(config.al_repeats):
+                xs.append(dropout(x, p=0.5))
+                xs[-1] = self.head_softmax(xs[-1], batch)
+            return xs # Should return a tensor of these
+        else:
+            x = self.head_softmax(x, batch) # Batchs seems to be irrelevant
 
-        return x
+            return x
 
     def loss(self, outputs, labels):
         """
@@ -375,7 +380,7 @@ class KPFCNN(nn.Module):
         return self.output_loss + self.reg_loss
 
     def f1(self, outputs, labels):
-        from sklearn.metrics  import f1_score
+        from sklearn.metrics import f1_score
         return f1_score(labels.detach().cpu().numpy(), torch.argmax(outputs.data, dim=1).detach().cpu().numpy())
 
     def accuracy(self, outputs, labels):
@@ -396,24 +401,3 @@ class KPFCNN(nn.Module):
         correct = (predicted == target).sum().item()
 
         return correct / total
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

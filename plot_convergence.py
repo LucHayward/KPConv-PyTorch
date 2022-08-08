@@ -157,7 +157,7 @@ def load_single_IoU(filename, n_parts):
 
     # Load all IoUs
     all_IoUs = []
-    for i, line in enumerate(lines):
+    for i, line in enumerate(lines): # TODO changed the format here.
         all_IoUs += [np.reshape([float(IoU) for IoU in line.split()], [-1, n_parts])]
     return all_IoUs
 
