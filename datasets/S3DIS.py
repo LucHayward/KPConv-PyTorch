@@ -801,7 +801,7 @@ class S3DISDataset(PointCloudDataset):
             # Restart timer
             t0 = time.time()
 
-            pot_dl = self.config.in_radius / 10
+            pot_dl = self.config.in_radius / 10 # Downsampling for potentials trees/points
             cloud_ind = 0
 
             for i, file_path in enumerate(self.files):

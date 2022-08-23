@@ -335,14 +335,14 @@ class ModelTrainer:
                 torch.save(save_dict, checkpoint_path)
                 results = _format_results(results)
                 np.save(join(checkpoint_directory, 'current_chkp_results'), results)
-                wandb.save(checkpoint_path)
+                # wandb.save(checkpoint_path)
 
                 # Save checkpoints occasionally
                 if (self.epoch + 1) % config.checkpoint_gap == 0:
                     checkpoint_path = join(checkpoint_directory, 'chkp_{:04d}.tar'.format(self.epoch + 1))
                     torch.save(save_dict, checkpoint_path)
-                    np.save(join(checkpoint_directory, f'chkp_{epoch}_results'), results)
-                    wandb.save(checkpoint_path)
+                    np.save(join(checkpoint_directory, f'chkp_{self.epoch+1}_results'), results)
+                    # wandb.save(checkpoint_path)
 
             # Validation
             net.eval()
@@ -487,7 +487,6 @@ class ModelTrainer:
         #     Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
 
         # Convert ground truth and prediction labels
-        # TODO check if the confusions (tpfn), f1 and IoUs are the same as Confs,_f1 and IoUs
         targets = np.hstack(targets)
         preds = np.vstack(predictions)
         preds = val_loader.dataset.label_values[np.argmax(preds, axis=1)]
@@ -530,7 +529,7 @@ class ModelTrainer:
             line = ''
             for IoU in [keepIoU, discardIoU]:
                 line += '{:.3f} '.format(IoU)
-            line = line + f'{f1}' + '\n'
+            # line = line + f'{f1}' + '\n'
 
             # Write in file
             if exists(test_file):
@@ -558,16 +557,16 @@ class ModelTrainer:
         t6 = time.time()
 
         # Print instance mean
-        print('{:s} mean IoU = {:.1f}%, F1 = {:.1f}%'.format(config.dataset, mIoU, f1))
-        wandb.log({'Validation/tn': tn,
-                   'Validation/fp': fp,
-                   'Validation/fn': fn,
-                   'Validation/tp': tp,
+        print('{:s} mean IoU = {:.1f}%, F1 = {:.1f}%'.format(config.dataset, mIoU*100, f1*100))
+        wandb.log({'Validation/TN': tn,
+                   'Validation/FP': fp,
+                   'Validation/FN': fn,
+                   'Validation/TP': tp,
                    'Validation/category-TP': percentage_category_confusion[0],
                    'Validation/category-FP': percentage_category_confusion[1],
                    'Validation/category-FN': percentage_category_confusion[2],
                    'Validation/category-TN': percentage_category_confusion[3],
-                   'Validation/f1': f1,
+                   'Validation/F1': f1,
                    'Validation/accuracy': accuracy,
                    'Validation/mIoU': mIoU,
                    })
@@ -603,9 +602,10 @@ class ModelTrainer:
 
                 # Save file
                 labels = val_loader.dataset.validation_labels[i].astype(np.int32)
-                write_ply(val_name,
-                          [points, preds, labels],
-                          ['x', 'y', 'z', 'preds', 'class'])
+                np.save(val_name, np.column_stack([points, preds, labels]))
+                # write_ply(val_name,
+                #           [points, preds, labels],
+                #           ['x', 'y', 'z', 'preds', 'class'])
         #         TODO Active Learning
         #         Need to output points, preds, targets, variance, and features.
         #         Variance must be normalised [-1,1]

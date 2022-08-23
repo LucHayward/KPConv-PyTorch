@@ -54,7 +54,7 @@ class MastersConfig(Config):
     dataset = 'Masters'
 
     # Dataset folder
-    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
+    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/capacityKPConv'
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -168,9 +168,9 @@ class MastersConfig(Config):
     # 'point2point' fitting geometry by penalizing distance from deform point to input points
     # 'point2plane' fitting geometry by penalizing distance from deform point to input point triplet (not implemented)
     deform_fitting_mode = 'point2point'
-    deform_fitting_power = 1.0              # Multiplier for the fitting/repulsive loss
-    deform_lr_factor = 0.1                  # Multiplier for learning rate applied to the deformations
-    repulse_extent = 1.2                    # Distance of repulsion for deformed kernel points
+    deform_fitting_power = 1.0  # Multiplier for the fitting/repulsive loss
+    deform_lr_factor = 0.1  # Multiplier for learning rate applied to the deformations
+    repulse_extent = 1.2  # Distance of repulsion for deformed kernel points
 
     #####################
     # Training parameters
@@ -178,6 +178,7 @@ class MastersConfig(Config):
 
     # Maximal number of epochs
     max_epoch = 500
+    # max_epoch = 26
 
     # Learning rate management
     learning_rate = 1e-2
@@ -190,12 +191,13 @@ class MastersConfig(Config):
 
     # Number of steps per epochs
     epoch_steps = 500
+    # epoch_steps = 50
 
     # Number of validation examples per epoch
     validation_size = 50
 
     # Number of epoch between each checkpoint
-    checkpoint_gap = 5
+    checkpoint_gap = 20
 
     # Augmentations
     augment_scale_anisotropic = True
@@ -223,12 +225,53 @@ class MastersConfig(Config):
 #       \***************/
 #
 
+def define_wandb_metrics():
+    wandb.define_metric('Train/TP', summary='max')
+    wandb.define_metric('Train/FP', summary='min')
+    wandb.define_metric('Train/TN', summary='max')
+    wandb.define_metric('Train/FN', summary='min')
+
+    wandb.define_metric('Train/category-TP', summary='max')
+    wandb.define_metric('Train/category-FP', summary='min')
+    wandb.define_metric('Train/category-TN', summary='max')
+    wandb.define_metric('Train/category-FN', summary='min')
+
+    # wandb.define_metric('Train/Precision', summary='max')
+    # wandb.define_metric('Train/Recall', summary='max')
+    wandb.define_metric('Train/F1', summary='max')
+    wandb.define_metric('Train/mIoU', summary='max')
+    wandb.define_metric('Train/accuracy', summary='max')
+    wandb.define_metric('Train/inner_reg_loss', summary='min')
+    wandb.define_metric('Train/inner_output_loss', summary='min')
+    wandb.define_metric('Train/inner_sum_loss', summary='min')
+
+
+    # Validation Classification metrics
+    wandb.define_metric('validation/TP', summary='max')
+    wandb.define_metric('validation/FP', summary='min')
+    wandb.define_metric('validation/TN', summary='max')
+    wandb.define_metric('validation/FN', summary='min')
+
+    wandb.define_metric('validation/category-TP', summary='max')
+    wandb.define_metric('validation/category-FP', summary='min')
+    wandb.define_metric('validation/category-TN', summary='max')
+    wandb.define_metric('validation/category-FN', summary='min')
+
+    # wandb.define_metric('Validation/Precision', summary='max')
+    # wandb.define_metric('Validation/Recall', summary='max')
+    wandb.define_metric('Validation/F1', summary='max')
+    wandb.define_metric('Validation/mIoU', summary='max')
+    wandb.define_metric('Validation/accuracy', summary='max')
+    # wandb.define_metric('Validation/eval_point_avg_class_accuracy', summary='max')
+    # wandb.define_metric('Validation/eval_mean_loss', summary='min')
+
 if __name__ == '__main__':
     # Initialise wandb
     os.environ["WANDB_MODE"] = "dryrun"
     wandb.init(project="kpconv")
     wandb.run.log_code("./train_Masters.py")
-
+    define_wandb_metrics()
+    
     ############################
     # Initialize the environment
     ############################
@@ -246,6 +289,8 @@ if __name__ == '__main__':
     # Choose here if you want to start training from a previous snapshot (None for new training)
     # previous_training_path = 'Log_2020-03-19_19-53-27'
     previous_training_path = ''
+    if len(previous_training_path) > 0:
+        print("Starting from ", previous_training_path)
 
     # Choose index of checkpoint to start from. If None, uses the latest chkp
     chkp_idx = None
@@ -284,9 +329,10 @@ if __name__ == '__main__':
         config.saving_path = sys.argv[1]
 
     # Initialize datasets
-    training_dataset = MastersDataset(config, set='train', use_potentials=False) # Don't use potentials if imbalanced
+    training_dataset = MastersDataset(config, set='train', use_potentials=False)  # Don't use potentials if imbalanced
     test_dataset = MastersDataset(config, set='validate', use_potentials=True)
-    class_weights, _ = np.histogram(training_dataset.input_labels, np.arange(training_dataset.label_values.max()+2))
+    print(f"{training_dataset.use_potentials=}\n{test_dataset.use_potentials=}")
+    class_weights, _ = np.histogram(training_dataset.input_labels, np.arange(training_dataset.label_values.max() + 2))
     class_weights = class_weights / np.sum(class_weights)
     class_weights = np.amax(class_weights) / class_weights
     # Cube root of labelweights has log-like effect for when labels are very imbalanced
@@ -339,8 +385,13 @@ if __name__ == '__main__':
         print("Model size %i" % sum(param.numel() for param in net.parameters() if param.requires_grad))
         print('\n*************************************\n')
 
-    wandb.config.update(config)
-    print("Config:\n", config.vars())
+    config_dict = dict(vars(MastersConfig))
+    config_dict.update(vars(config))
+    wandb.config.update(config_dict)
+    print("Config:")
+    import pprint
+
+    pprint.pprint(config_dict)
     # Define a trainer class
     trainer = ModelTrainer(net, config, chkp_path=chosen_chkp)
     print('Done in {:.1f}s\n'.format(time.time() - t1))
