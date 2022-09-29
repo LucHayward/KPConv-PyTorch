@@ -54,7 +54,7 @@ class MastersConfig(Config):
     dataset = 'Masters'
 
     # Dataset folder
-    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/capacityKPConv'
+    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -63,7 +63,7 @@ class MastersConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 0
+    input_threads = 4
 
     # Active Learning
     active_learning = False
@@ -74,30 +74,6 @@ class MastersConfig(Config):
     #########################
 
     # # Define layers
-    architecture = ['simple',
-                    'resnetb',
-                    'resnetb_strided',
-                    'resnetb',
-                    'resnetb',
-                    'resnetb_strided',
-                    'resnetb',
-                    'resnetb',
-                    'resnetb_strided',
-                    'resnetb_deformable',
-                    'resnetb_deformable',
-                    'resnetb_deformable_strided',
-                    'resnetb_deformable',
-                    'resnetb_deformable',
-                    'nearest_upsample',
-                    'unary',
-                    'nearest_upsample',
-                    'unary',
-                    'nearest_upsample',
-                    'unary',
-                    'nearest_upsample',
-                    'unary']
-
-    # Define layers
     # architecture = ['simple',
     #                 'resnetb',
     #                 'resnetb_strided',
@@ -107,11 +83,11 @@ class MastersConfig(Config):
     #                 'resnetb',
     #                 'resnetb',
     #                 'resnetb_strided',
-    #                 'resnetb',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb',
-    #                 'resnetb',
+    #                 'resnetb_deformable',
+    #                 'resnetb_deformable',
+    #                 'resnetb_deformable_strided',
+    #                 'resnetb_deformable',
+    #                 'resnetb_deformable',
     #                 'nearest_upsample',
     #                 'unary',
     #                 'nearest_upsample',
@@ -120,6 +96,30 @@ class MastersConfig(Config):
     #                 'unary',
     #                 'nearest_upsample',
     #                 'unary']
+
+    # Define layers
+    architecture = ['simple',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb',
+                    'resnetb',
+                    'nearest_upsample',
+                    'unary',
+                    'nearest_upsample',
+                    'unary',
+                    'nearest_upsample',
+                    'unary',
+                    'nearest_upsample',
+                    'unary']
 
     ###################
     # KPConv parameters
@@ -177,8 +177,8 @@ class MastersConfig(Config):
     #####################
 
     # Maximal number of epochs
-    max_epoch = 500
-    # max_epoch = 26
+    # max_epoch = 500
+    max_epoch = 100
 
     # Learning rate management
     learning_rate = 1e-2
@@ -197,7 +197,7 @@ class MastersConfig(Config):
     validation_size = 50
 
     # Number of epoch between each checkpoint
-    checkpoint_gap = 20
+    checkpoint_gap = 10
 
     # Augmentations
     augment_scale_anisotropic = True
@@ -268,7 +268,7 @@ def define_wandb_metrics():
 if __name__ == '__main__':
     # Initialise wandb
     os.environ["WANDB_MODE"] = "dryrun"
-    wandb.init(project="kpconv")
+    wandb.init(project="kpconv", name="5%Non-Deformable")
     wandb.run.log_code("./train_Masters.py")
     define_wandb_metrics()
     

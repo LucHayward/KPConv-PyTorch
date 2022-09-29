@@ -333,7 +333,7 @@ class ModelTrainer:
                 # Save current state of the network (for restoring purposes)
                 checkpoint_path = join(checkpoint_directory, 'current_chkp.tar')
                 torch.save(save_dict, checkpoint_path)
-                results = _format_results(results)
+                results = _format_results(results) # lbls, preds, counts
                 np.save(join(checkpoint_directory, 'current_chkp_results'), results)
                 # wandb.save(checkpoint_path)
 
@@ -602,7 +602,7 @@ class ModelTrainer:
 
                 # Save file
                 labels = val_loader.dataset.validation_labels[i].astype(np.int32)
-                np.save(val_name, np.column_stack([points, preds, labels]))
+                np.save(val_name, np.column_stack([points, labels, preds]))
                 # write_ply(val_name,
                 #           [points, preds, labels],
                 #           ['x', 'y', 'z', 'preds', 'class'])
