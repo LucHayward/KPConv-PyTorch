@@ -78,6 +78,10 @@ class ModelTrainer:
         self.epoch = 0
         self.step = 0
 
+        # Best IoU
+        self.best_train_mIoU = 0
+        self.best_val_mIoU = 0
+
         # Optimizer with specific learning rate for deformable KPConv
         deform_params = [v for k, v in net.named_parameters() if 'offset' in k]
         other_params = [v for k, v in net.named_parameters() if 'offset' not in k]
@@ -320,7 +324,11 @@ class ModelTrainer:
                            'Train/F1': f1,
                            'Train/mIoU': mIoU,
                            'Train/accuracy': accuracy})
-                return np.column_stack([pts, lbls, pred_votes, counts])
+                if mIoU > self.best_train_mIoU:
+                    self.best_train_mIoU = mIoU
+                    return np.column_stack([pts, lbls, pred_votes, counts]), True
+                else:
+                    return np.column_stack([pts, lbls, pred_votes, counts]), False
 
             # Saving
             if config.saving:
@@ -333,7 +341,7 @@ class ModelTrainer:
                 # Save current state of the network (for restoring purposes)
                 checkpoint_path = join(checkpoint_directory, 'current_chkp.tar')
                 torch.save(save_dict, checkpoint_path)
-                results = _format_results(results) # lbls, preds, counts
+                results, new_best_mIoU = _format_results(results) # lbls, preds, counts
                 np.save(join(checkpoint_directory, 'current_chkp_results'), results)
                 # wandb.save(checkpoint_path)
 
@@ -343,6 +351,10 @@ class ModelTrainer:
                     torch.save(save_dict, checkpoint_path)
                     np.save(join(checkpoint_directory, f'chkp_{self.epoch+1}_results'), results)
                     # wandb.save(checkpoint_path)
+                if new_best_mIoU:
+                    checkpoint_path = join(checkpoint_directory, 'best_train_chkp.tar'.format(self.epoch + 1))
+                    torch.save(save_dict, checkpoint_path)
+                    np.save(join(checkpoint_directory, f'best_train_chkp_results'), results)
 
             # Validation
             net.eval()
@@ -500,6 +512,10 @@ class ModelTrainer:
         accuracy = accuracy_score(targets, preds)
         t3 = time.time()
 
+        new_best_mIoU = False
+        if mIoU > self.best_val_mIoU:
+            self.best_val_mIoU = mIoU
+            new_best_mIoU = True
         # # Sum all confusions
         # C = np.sum(Confs, axis=0).astype(np.float32)
         #
@@ -571,41 +587,49 @@ class ModelTrainer:
                    'Validation/mIoU': mIoU,
                    })
 
+        def gather_validation_save_data():
+            # Get points
+            points = val_loader.dataset.load_evaluation_points(file_path)
+
+            # Get probs on our own ply points
+            sub_probs = self.validation_probs[i]
+
+            # Insert false columns for ignored labels
+            for l_ind, label_value in enumerate(val_loader.dataset.label_values):
+                if label_value in val_loader.dataset.ignored_labels:
+                    sub_probs = np.insert(sub_probs, l_ind, 0, axis=1)
+
+            # Get the predicted labels
+            sub_preds = val_loader.dataset.label_values[np.argmax(sub_probs, axis=1).astype(np.int32)]
+
+            # Reproject preds on the evaluations points
+            preds = (sub_preds[val_loader.dataset.test_proj[i]]).astype(np.int32)
+
+            # Path of saved validation file
+            cloud_name = file_path.split('/')[-1]
+            val_name = join(val_path, cloud_name)
+
+            # Save file
+            labels = val_loader.dataset.validation_labels[i].astype(np.int32)
+
+            return val_name, points, preds, labels
+
         # Save predicted cloud occasionally NOTE this is where we save the validation results occasionally
-        if config.saving and (self.epoch + 1) % config.checkpoint_gap == 0:
+        if config.saving and (self.epoch + 1) % config.checkpoint_gap == 0 or new_best_mIoU:
             val_path = join(config.saving_path, 'val_preds_{:d}'.format(self.epoch + 1))
             if not exists(val_path):
                 makedirs(val_path)
             files = val_loader.dataset.files
             for i, file_path in enumerate(files):
-
-                # Get points
-                points = val_loader.dataset.load_evaluation_points(file_path)
-
-                # Get probs on our own ply points
-                sub_probs = self.validation_probs[i]
-
-                # Insert false columns for ignored labels
-                for l_ind, label_value in enumerate(val_loader.dataset.label_values):
-                    if label_value in val_loader.dataset.ignored_labels:
-                        sub_probs = np.insert(sub_probs, l_ind, 0, axis=1)
-
-                # Get the predicted labels
-                sub_preds = val_loader.dataset.label_values[np.argmax(sub_probs, axis=1).astype(np.int32)]
-
-                # Reproject preds on the evaluations points
-                preds = (sub_preds[val_loader.dataset.test_proj[i]]).astype(np.int32)
-
-                # Path of saved validation file
-                cloud_name = file_path.split('/')[-1]
-                val_name = join(val_path, cloud_name)
-
-                # Save file
-                labels = val_loader.dataset.validation_labels[i].astype(np.int32)
-                np.save(val_name, np.column_stack([points, labels, preds]))
-                # write_ply(val_name,
-                #           [points, preds, labels],
-                #           ['x', 'y', 'z', 'preds', 'class'])
+                val_name, points, preds, labels = gather_validation_save_data()
+                if (self.epoch + 1) % config.checkpoint_gap == 0:
+                    write_ply(val_name,
+                              [points, preds, labels],
+                              ['x', 'y', 'z', 'preds', 'class'])
+                if new_best_mIoU:
+                    write_ply(val_name, # TODO Check how to fix this correctly
+                              [points, preds, labels],
+                              ['x', 'y', 'z', 'preds', 'class'])
         #         TODO Active Learning
         #         Need to output points, preds, targets, variance, and features.
         #         Variance must be normalised [-1,1]
