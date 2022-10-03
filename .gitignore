@@ -23,3 +23,4 @@ __pycache__/
 /.idea/modules.xml
 /.idea/inspectionProfiles/profiles_settings.xml
 /wandb/
+/Data/

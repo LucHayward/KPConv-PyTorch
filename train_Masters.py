@@ -54,7 +54,8 @@ class MastersConfig(Config):
     dataset = 'Masters'
 
     # Dataset folder
-    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
+    # dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
+    dataset_folder = '/home/eco02/Luc/Data/PatrickData/Church/MastersFormat/5%area_KPConv'
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -74,30 +75,6 @@ class MastersConfig(Config):
     #########################
 
     # # Define layers
-    # architecture = ['simple',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb_deformable',
-    #                 'resnetb_deformable',
-    #                 'resnetb_deformable_strided',
-    #                 'resnetb_deformable',
-    #                 'resnetb_deformable',
-    #                 'nearest_upsample',
-    #                 'unary',
-    #                 'nearest_upsample',
-    #                 'unary',
-    #                 'nearest_upsample',
-    #                 'unary',
-    #                 'nearest_upsample',
-    #                 'unary']
-
-    # Define layers
     architecture = ['simple',
                     'resnetb',
                     'resnetb_strided',
@@ -107,11 +84,11 @@ class MastersConfig(Config):
                     'resnetb',
                     'resnetb',
                     'resnetb_strided',
-                    'resnetb',
-                    'resnetb',
-                    'resnetb_strided',
-                    'resnetb',
-                    'resnetb',
+                    'resnetb_deformable',
+                    'resnetb_deformable',
+                    'resnetb_deformable_strided',
+                    'resnetb_deformable',
+                    'resnetb_deformable',
                     'nearest_upsample',
                     'unary',
                     'nearest_upsample',
@@ -120,6 +97,30 @@ class MastersConfig(Config):
                     'unary',
                     'nearest_upsample',
                     'unary']
+
+    # Define layers
+    # architecture = ['simple',
+    #                 'resnetb',
+    #                 'resnetb_strided',
+    #                 'resnetb',
+    #                 'resnetb',
+    #                 'resnetb_strided',
+    #                 'resnetb',
+    #                 'resnetb',
+    #                 'resnetb_strided',
+    #                 'resnetb',
+    #                 'resnetb',
+    #                 'resnetb_strided',
+    #                 'resnetb',
+    #                 'resnetb',
+    #                 'nearest_upsample',
+    #                 'unary',
+    #                 'nearest_upsample',
+    #                 'unary',
+    #                 'nearest_upsample',
+    #                 'unary',
+    #                 'nearest_upsample',
+    #                 'unary']
 
     ###################
     # KPConv parameters
@@ -268,7 +269,7 @@ def define_wandb_metrics():
 if __name__ == '__main__':
     # Initialise wandb
     os.environ["WANDB_MODE"] = "dryrun"
-    wandb.init(project="kpconv", name="5%Non-Deformable")
+    wandb.init(project="kpconv", name="5%deformable_test_UZH")
     wandb.run.log_code("./train_Masters.py")
     define_wandb_metrics()
     
@@ -278,7 +279,6 @@ if __name__ == '__main__':
 
     # Set which gpu is going to be used
     GPU_ID = '0'
-
     # Set GPU visible device
     os.environ['CUDA_VISIBLE_DEVICES'] = GPU_ID
 
