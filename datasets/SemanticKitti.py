@@ -764,6 +764,7 @@ class SemanticKittiSampler(Sampler):
                     # Get the potentials of the frames containing this class
                     class_potentials = self.dataset.potentials[self.dataset.class_frames[i]]
 
+
                     if class_potentials.shape[0] > 0:
 
                         # Get the indices to generate thanks to potentials
@@ -772,9 +773,9 @@ class SemanticKittiSampler(Sampler):
                         if class_n < class_potentials.shape[0]:
                             _, class_indices = torch.topk(class_potentials, class_n, largest=False)
                         else:
-                            class_indices = torch.zeros((0,), dtype=torch.int32)
+                            class_indices = torch.zeros((0,), dtype=torch.int64)
                             while class_indices.shape[0] < class_n:
-                                new_class_inds = torch.randperm(class_potentials.shape[0]).type(torch.int32)
+                                new_class_inds = torch.randperm(class_potentials.shape[0]).type(torch.int64)
                                 class_indices = torch.cat((class_indices, new_class_inds), dim=0)
                             class_indices = class_indices[:class_n]
                         class_indices = self.dataset.class_frames[i][class_indices]
@@ -787,6 +788,15 @@ class SemanticKittiSampler(Sampler):
                         update_inds = torch.unique(class_indices)
                         self.dataset.potentials[update_inds] = torch.ceil(self.dataset.potentials[update_inds])
                         self.dataset.potentials[update_inds] += torch.from_numpy(np.random.rand(update_inds.shape[0]) * 0.1 + 0.1)
+
+                    else:
+                        error_message = '\nIt seems there is a problem with the class statistics of your dataset, saved in the variable dataset.class_frames.\n'
+                        error_message += 'Here are the current statistics:\n'
+                        error_message += '{:>15s} {:>15s}\n'.format('Class', '# of frames')
+                        for iii, ccc in enumerate(self.dataset.label_values):
+                            error_message += '{:>15s} {:>15d}\n'.format(self.dataset.label_names[iii], len(self.dataset.class_frames[iii]))
+                        error_message += '\nThis error is raised if one of the classes is not ignored and does not appear in any of the frames of the dataset.\n'
+                        raise ValueError(error_message)
 
             # Stack the chosen indices of all classes
             gen_indices = torch.cat(gen_indices, dim=0)
