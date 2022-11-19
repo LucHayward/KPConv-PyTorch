@@ -25,6 +25,8 @@
 import os
 import torch
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from os.path import isfile, join, exists
 from os import listdir, remove, getcwd
@@ -782,6 +784,7 @@ if __name__ == '__main__':
 
     # My logs: choose the logs to show
     logs, logs_names = experiment_name_1()
+    logs, logs_names = ["results/Log_2022-11-02_16-10-58"], ["s3dis-xyz"]
 
     ################
     # Plot functions

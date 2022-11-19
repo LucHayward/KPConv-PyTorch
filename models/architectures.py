@@ -336,14 +336,14 @@ class KPFCNN(nn.Module):
         # Head of network
         x = self.head_mlp(x, batch)
         xs = []
-        if do_AL: # Add dropout to induce randomness for active learning.
+        if do_AL:  # Add dropout to induce randomness for active learning.
             from torch.nn.functional import dropout
             for i in range(config.al_repeats):
                 xs.append(dropout(x, p=0.5))
                 xs[-1] = self.head_softmax(xs[-1], batch)
-            return xs # Should return a tensor of these
+            return xs  # Should return a tensor of these
         else:
-            x = self.head_softmax(x, batch) # Batchs seems to be irrelevant
+            x = self.head_softmax(x, batch)  # Batchs seems to be irrelevant
 
             return x
 
@@ -379,9 +379,12 @@ class KPFCNN(nn.Module):
         # Combined loss
         return self.output_loss + self.reg_loss
 
-    def f1(self, outputs, labels):
+    def f1(self, outputs, labels, average=[]):
         from sklearn.metrics import f1_score
-        return f1_score(labels.detach().cpu().numpy(), torch.argmax(outputs.data, dim=1).detach().cpu().numpy())
+        if len(average) == 0:
+            average.append("macro" if len(np.unique(labels.detach().cpu().numpy())) > 2 else "binary")
+        return f1_score(labels.detach().cpu().numpy(), torch.argmax(outputs.data, dim=1).detach().cpu().numpy(),
+                        average=average[0])
 
     def accuracy(self, outputs, labels):
         """

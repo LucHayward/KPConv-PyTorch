@@ -85,7 +85,7 @@ class S3DISDataset(PointCloudDataset):
         self.ignored_labels = np.array([])
 
         # Dataset folder
-        self.path = '/media/luc/extrassd/Data/S3DIS/'
+        self.path = '/home/eco02/Luc/KPConv-PyTorch/Data/S3DIS'
 
         # Type of task conducted on this dataset
         self.dataset_task = 'cloud_segmentation'
@@ -351,7 +351,8 @@ class S3DISDataset(PointCloudDataset):
 
             # Collect labels and colors
             input_points = (points[input_inds] - center_point).astype(np.float32)
-            input_colors = self.input_colors[cloud_ind][input_inds]
+            if self.input_colors[0] is not None:
+                input_colors = self.input_colors[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
             else:
@@ -363,13 +364,15 @@ class S3DISDataset(PointCloudDataset):
             # Data augmentation
             input_points, scale, R = self.augmentation_transform(input_points)
 
-            # Color augmentation
-            if np.random.rand() > self.config.augment_color:
-                input_colors *= 0
+            if self.input_colors[0] is not None:
+                # Color augmentation
+                if np.random.rand() > self.config.augment_color:
+                    input_colors *= 0
 
-            # Get original height as additional feature
-            input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
-
+                # Get original height as additional feature
+                input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
+            else:
+                input_features = (input_points[:, 2:] + center_point[:, 2:]).astype(np.float32)
             t += [time.time()]
 
             # Stack batch
@@ -554,7 +557,8 @@ class S3DISDataset(PointCloudDataset):
 
             # Collect labels and colors
             input_points = (points[input_inds] - center_point).astype(np.float32)
-            input_colors = self.input_colors[cloud_ind][input_inds]
+            if self.input_intensityies[0] is not None:
+                input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
             else:
@@ -564,13 +568,15 @@ class S3DISDataset(PointCloudDataset):
             # Data augmentation
             input_points, scale, R = self.augmentation_transform(input_points)
 
-            # Color augmentation
-            if np.random.rand() > self.config.augment_color:
-                input_colors *= 0
+            if self.input_colors[0] is not None:
+                # Color augmentation
+                if np.random.rand() > self.config.augment_color:
+                    input_colors *= 0
 
-            # Get original height as additional feature
-            input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
-
+                # Get original height as additional feature
+                input_features = np.hstack((input_colors, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
+            else:
+                input_features = (input_points[:, 2:] + center_point[:, 2:]).astype(np.float32)
             # Stack batch
             p_list += [input_points]
             f_list += [input_features]
@@ -655,7 +661,8 @@ class S3DISDataset(PointCloudDataset):
 
             # Get rooms of the current cloud
             cloud_folder = join(self.path, cloud_name)
-            room_folders = [join(cloud_folder, room) for room in listdir(cloud_folder) if isdir(join(cloud_folder, room))]
+            room_folders = [join(cloud_folder, room) for room in listdir(cloud_folder) if
+                            isdir(join(cloud_folder, room))]
 
             # Initiate containers
             cloud_points = np.empty((0, 3), dtype=np.float32)
@@ -742,7 +749,8 @@ class S3DISDataset(PointCloudDataset):
 
                 # read ply with data
                 data = read_ply(sub_ply_file)
-                sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
+                if len(data.dtype) > 4:
+                    sub_colors = np.vstack((data['red'], data['green'], data['blue'])).T
                 sub_labels = data['class']
 
                 # Read pkl with search tree
@@ -755,17 +763,25 @@ class S3DISDataset(PointCloudDataset):
                 # Read ply file
                 data = read_ply(file_path)
                 points = np.vstack((data['x'], data['y'], data['z'])).T
-                colors = np.vstack((data['red'], data['green'], data['blue'])).T
+                if len(data.dtype) > 4:
+                    colors = np.vstack((data['red'], data['green'], data['blue'])).T
                 labels = data['class']
 
                 # Subsample cloud
-                sub_points, sub_colors, sub_labels = grid_subsampling(points,
-                                                                      features=colors,
-                                                                      labels=labels,
-                                                                      sampleDl=dl)
+                if len(data.dtype) > 4:
+                    sub_points, sub_colors, sub_labels = grid_subsampling(points,
+                                                                          features=colors,
+                                                                          labels=labels,
+                                                                          sampleDl=dl)
+                    # Rescale float color
+                    sub_colors = sub_colors / 255
+                else:
+                    sub_points, sub_labels = grid_subsampling(points,
+                                                              features=None,
+                                                              labels=labels,
+                                                              sampleDl=dl)
 
-                # Rescale float color and squeeze label
-                sub_colors = sub_colors / 255
+                # squeeze label
                 sub_labels = np.squeeze(sub_labels)
 
                 # Get chosen neighborhoods
@@ -778,16 +794,21 @@ class S3DISDataset(PointCloudDataset):
                     pickle.dump(search_tree, f)
 
                 # Save ply
-                write_ply(sub_ply_file,
-                          [sub_points, sub_colors, sub_labels],
-                          ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
+                if len(data.dtype) > 4:
+                    write_ply(sub_ply_file,
+                              [sub_points, sub_colors, sub_labels],
+                              ['x', 'y', 'z', 'red', 'green', 'blue', 'class'])
+                else:
+                    write_ply(sub_ply_file,
+                              [sub_points, sub_labels],
+                              ['x', 'y', 'z', 'class'])
 
             # Fill data containers
             self.input_trees += [search_tree]
-            self.input_colors += [sub_colors]
+            self.input_colors += [sub_colors] if len(data.dtype) > 4 else [None]
             self.input_labels += [sub_labels]
 
-            size = sub_colors.shape[0] * 4 * 7
+            size = sub_labels.shape[0] * 4 * 7
             print('{:.1f} MB loaded in {:.1f}s'.format(size * 1e-6, time.time() - t0))
 
         ############################
@@ -801,7 +822,7 @@ class S3DISDataset(PointCloudDataset):
             # Restart timer
             t0 = time.time()
 
-            pot_dl = self.config.in_radius / 10 # Downsampling for potentials trees/points
+            pot_dl = self.config.in_radius / 10  # Downsampling for potentials trees/points
             cloud_ind = 0
 
             for i, file_path in enumerate(self.files):
@@ -946,7 +967,8 @@ class S3DISSampler(Sampler):
                     all_label_indices = []
                     for cloud_ind, cloud_labels in enumerate(self.dataset.input_labels):
                         label_indices = np.where(np.equal(cloud_labels, label))[0]
-                        all_label_indices.append(np.vstack((np.full(label_indices.shape, cloud_ind, dtype=np.int64), label_indices)))
+                        all_label_indices.append(
+                            np.vstack((np.full(label_indices.shape, cloud_ind, dtype=np.int64), label_indices)))
 
                     # Stack them: [2, N1+N2+...]
                     all_label_indices = np.hstack(all_label_indices)
@@ -956,11 +978,13 @@ class S3DISSampler(Sampler):
                     if N_inds < random_pick_n:
                         chosen_label_inds = np.zeros((2, 0), dtype=np.int64)
                         while chosen_label_inds.shape[1] < random_pick_n:
-                            chosen_label_inds = np.hstack((chosen_label_inds, all_label_indices[:, np.random.permutation(N_inds)]))
+                            chosen_label_inds = np.hstack(
+                                (chosen_label_inds, all_label_indices[:, np.random.permutation(N_inds)]))
                         warnings.warn('When choosing random epoch indices (use_potentials=False), \
                                        class {:d}: {:s} only had {:d} available points, while we \
                                        needed {:d}. Repeating indices in the same epoch'.format(label,
-                                                                                                self.dataset.label_names[label_ind],
+                                                                                                self.dataset.label_names[
+                                                                                                    label_ind],
                                                                                                 N_inds,
                                                                                                 random_pick_n))
 
@@ -1233,7 +1257,8 @@ class S3DISSampler(Sampler):
                 for batch_i, batch in enumerate(dataloader):
 
                     # Update neighborhood histogram
-                    counts = [np.sum(neighb_mat.numpy() < neighb_mat.shape[0], axis=1) for neighb_mat in batch.neighbors]
+                    counts = [np.sum(neighb_mat.numpy() < neighb_mat.shape[0], axis=1) for neighb_mat in
+                              batch.neighbors]
                     hists = [np.bincount(c, minlength=hist_n)[:hist_n] for c in counts]
                     neighb_hists += np.vstack(hists)
 
@@ -1298,7 +1323,8 @@ class S3DISSampler(Sampler):
             if not breaking:
                 import matplotlib.pyplot as plt
 
-                print("ERROR: It seems that the calibration have not reached convergence. Here are some plot to understand why:")
+                print(
+                    "ERROR: It seems that the calibration have not reached convergence. Here are some plot to understand why:")
                 print("If you notice unstability, reduce the expected_N value")
                 print("If convergece is too slow, increase the expected_N value")
 

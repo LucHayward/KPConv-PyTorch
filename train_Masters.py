@@ -55,7 +55,7 @@ class MastersConfig(Config):
 
     # Dataset folder
     # dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
-    dataset_folder = '/home/eco02/Luc/Data/PatrickData/Church/MastersFormat/5%area_KPConv'
+    dataset_folder = '/home/eco02/Luc/Data/PatrickData/Church/MastersFormat/hand_selected_50%KPConv'
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -64,7 +64,7 @@ class MastersConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 4
+    input_threads = 10
 
     # Active Learning
     active_learning = False
@@ -156,7 +156,7 @@ class MastersConfig(Config):
 
     # Choice of input features
     first_features_dim = 128
-    in_features_dim = 3
+    in_features_dim = 1
 
     # Can the network learn modulations
     modulated = False
@@ -191,8 +191,8 @@ class MastersConfig(Config):
     batch_num = 6
 
     # Number of steps per epochs
-    epoch_steps = 500
-    # epoch_steps = 50
+    # epoch_steps = 500
+    epoch_steps = 50
 
     # Number of validation examples per epoch
     validation_size = 50

@@ -25,6 +25,9 @@
 import signal
 import os
 
+import wandb
+from train_Masters import define_wandb_metrics
+
 # Dataset
 from datasets.S3DIS import *
 from torch.utils.data import DataLoader
@@ -48,6 +51,7 @@ class S3DISConfig(Config):
     ####################
     # Dataset parameters
     ####################
+    active_learning=False
 
     # Dataset name
     dataset = 'S3DIS'
@@ -121,10 +125,10 @@ class S3DISConfig(Config):
     num_kernel_points = 15
 
     # Radius of the input sphere (decrease value to reduce memory cost)
-    in_radius = 1.2
+    in_radius = 1.0
 
     # Size of the first subsampling grid in meter (increase value to reduce memory cost)
-    first_subsampling_dl = 0.03
+    first_subsampling_dl = 0.02
 
     # Radius of convolution in "number grid cell". (2.5 is the standard value)
     conv_radius = 2.5
@@ -143,7 +147,7 @@ class S3DISConfig(Config):
 
     # Choice of input features
     first_features_dim = 128
-    in_features_dim = 5
+    in_features_dim = 1
 
     # Can the network learn modulations
     modulated = False
@@ -174,7 +178,7 @@ class S3DISConfig(Config):
     grad_clip_norm = 100.0
 
     # Number of batch (decrease to reduce memory cost, but it should remain > 3 for stability)
-    batch_num = 6
+    batch_num = 5
 
     # Number of steps per epochs
     epoch_steps = 500
@@ -212,6 +216,11 @@ class S3DISConfig(Config):
 #
 
 if __name__ == '__main__':
+    # Initialise wandb
+    os.environ["WANDB_MODE"] = "dryrun"
+    wandb.init(project="kpconv", name="S3DIS_xyz")
+    wandb.run.log_code("./train_S3DIS.py")
+    define_wandb_metrics()
 
     ############################
     # Initialize the environment
@@ -316,6 +325,15 @@ if __name__ == '__main__':
         print('\n*************************************\n')
         print("Model size %i" % sum(param.numel() for param in net.parameters() if param.requires_grad))
         print('\n*************************************\n')
+
+    config_dict = dict(vars(S3DISConfig))
+    config_dict.update(vars(config))
+    wandb.config.update(config_dict)
+    print("Config:")
+    import pprint
+
+    pprint.pprint(config_dict)
+    # Define a trainer class
 
     # Define a trainer class
     trainer = ModelTrainer(net, config, chkp_path=chosen_chkp)
