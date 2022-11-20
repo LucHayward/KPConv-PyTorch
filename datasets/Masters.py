@@ -340,7 +340,8 @@ class MastersDataset(PointCloudDataset):
 
             # Collect labels and colors
             input_points = (self.input_trees[cloud_ind].data.base[input_inds] - center_point).astype(np.float32)
-            input_intensity = self.input_intensities[cloud_ind][input_inds]
+            if self.input_intensities[0] is not None:
+                input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
             else:
@@ -352,14 +353,16 @@ class MastersDataset(PointCloudDataset):
             # Data augmentation
             input_points, scale, R = self.augmentation_transform(input_points)
 
-            # Color augmentation
-            if np.random.rand() > self.config.augment_color:
-                input_intensity *= 0
+            if self.input_intensities[0] is not None:
+                # Color augmentation
+                if np.random.rand() > self.config.augment_color:
+                    input_intensity *= 0
 
-            # CHECK input features definition
-            # Get original height as additional feature NOTE add back the center point
-            input_features = np.hstack((input_intensity, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
-
+                # CHECK input features definition
+                # Get original height as additional feature NOTE add back the center point
+                input_features = np.hstack((input_intensity, input_points[:, 2:] + center_point[:, 2:])).astype(np.float32)
+            else:
+                input_features = (input_points[:, 2:] + center_point[:, 2:]).astype(np.float32)
             t += [time.time()]
 
             # Stack batch
@@ -546,7 +549,8 @@ class MastersDataset(PointCloudDataset):
             # Collect points (from underlying array now as copy), labels and colors
             # NOTE Subtract the center so that its centered on the origin (plus some noise)
             input_points = (points[input_inds] - center_point).astype(np.float32)
-            input_intensity = self.input_intensities[cloud_ind][input_inds]
+            if self.input_intensities[0] is not None:
+                input_intensity = self.input_intensities[cloud_ind][input_inds]
             if self.set in ['test', 'ERF']:
                 input_labels = np.zeros(input_points.shape[0])
             else:
@@ -556,14 +560,16 @@ class MastersDataset(PointCloudDataset):
             # Data augmentation
             input_points, scale, R = self.augmentation_transform(input_points)
 
-            # Color augmentation
-            if np.random.rand() > self.config.augment_color:
-                input_intensity *= 0
+            if self.input_intensities[0] is not None:
+                # Color augmentation
+                if np.random.rand() > self.config.augment_color:
+                    input_intensity *= 0
 
-            # CHECK input features here
-            # Get original height as additional feature NOTE add back the center point
-            input_features = np.hstack((input_intensity, input_points[:, 2:3] + center_point[:, 2:3])).astype(np.float32)
-
+                # CHECK input features here
+                # Get original height as additional feature NOTE add back the center point
+                input_features = np.hstack((input_intensity, input_points[:, 2:3] + center_point[:, 2:3])).astype(np.float32)
+            else:
+                input_features = (input_points[:, 2:] + center_point[:, 2:]).astype(np.float32)
             # Stack batch
             p_list += [input_points]
             f_list += [input_features]

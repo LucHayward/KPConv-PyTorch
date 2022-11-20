@@ -123,6 +123,7 @@ class ModelTrainer:
         if config.saving:
             if config.saving_path is None:
                 config.saving_path = time.strftime('results/Log_%Y-%m-%d_%H-%M-%S', time.gmtime())
+                # wandb.config.update({'saving_path': config.saving_path}, allow_val_change=True)
             if not exists(config.saving_path):
                 makedirs(config.saving_path)
             config.save()
@@ -315,10 +316,10 @@ class ModelTrainer:
                       f"{mIoU=:.3f}\n"
                       f"{accuracy=:.3f}\n")
                 wandb.log({'Train/epoch': self.epoch,
-                           'Train/tn': tn,
-                           'Train/fp': fp,
-                           'Train/fn': fn,
-                           'Train/tp': tp,
+                           'Train/TN': tn,
+                           'Train/FP': fp,
+                           'Train/FN': fn,
+                           'Train/FP': tp,
                            'Train/category-TP': percentage_category_confusion[0],
                            'Train/category-FP': percentage_category_confusion[1],
                            'Train/category-FN': percentage_category_confusion[2],
@@ -343,20 +344,20 @@ class ModelTrainer:
                 # Save current state of the network (for restoring purposes)
                 checkpoint_path = join(checkpoint_directory, 'current_chkp.tar')
                 torch.save(save_dict, checkpoint_path)
-                results, new_best_mIoU = _format_results(results) # lbls, preds, counts
-                np.save(join(checkpoint_directory, 'current_chkp_results'), results)
-                # wandb.save(checkpoint_path)
+                # results, new_best_mIoU = _format_results(results) # lbls, preds, counts
+                # np.save(join(checkpoint_directory, 'current_chkp_results'), results)
+                # # wandb.save(checkpoint_path)
 
                 # Save checkpoints occasionally
                 if (self.epoch + 1) % config.checkpoint_gap == 0:
                     checkpoint_path = join(checkpoint_directory, 'chkp_{:04d}.tar'.format(self.epoch + 1))
                     torch.save(save_dict, checkpoint_path)
-                    np.save(join(checkpoint_directory, f'chkp_{self.epoch+1}_results'), results)
-                    # wandb.save(checkpoint_path)
-                if new_best_mIoU:
-                    checkpoint_path = join(checkpoint_directory, 'best_train_chkp.tar'.format(self.epoch + 1))
-                    torch.save(save_dict, checkpoint_path)
-                    np.save(join(checkpoint_directory, f'best_train_chkp_results'), results)
+                #     np.save(join(checkpoint_directory, f'chkp_{self.epoch+1}_results'), results)
+                #     # wandb.save(checkpoint_path)
+                # if new_best_mIoU:
+                #     checkpoint_path = join(checkpoint_directory, 'best_train_chkp.tar'.format(self.epoch + 1))
+                #     torch.save(save_dict, checkpoint_path)
+                #     np.save(join(checkpoint_directory, f'best_train_chkp_results'), results)
 
             # Validation
             net.eval()
@@ -485,59 +486,43 @@ class ModelTrainer:
 
         t2 = time.time()
 
-        # # Confusions for our subparts of validation set
-        # Confs = np.zeros((len(predictions), nc_tot, nc_tot), dtype=np.int32)
-        # for i, (probs, truth) in enumerate(zip(predictions, targets)):
-        #
-        #     # Insert false columns for ignored labels
-        #     for l_ind, label_value in enumerate(val_loader.dataset.label_values):
-        #         if label_value in val_loader.dataset.ignored_labels:
-        #             probs = np.insert(probs, l_ind, 0, axis=1)
-        #
-        #     # Predicted labels
-        #     preds = val_loader.dataset.label_values[np.argmax(probs, axis=1)]
-        #
-        #     # Confusions
-        #     Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
+        # Confusions for our subparts of validation set
+        Confs = np.zeros((len(predictions), nc_tot, nc_tot), dtype=np.int32)
+        for i, (probs, truth) in enumerate(zip(predictions, targets)):
 
-        # Convert ground truth and prediction labels
-        targets = np.hstack(targets)
-        preds = np.vstack(predictions)
-        preds = val_loader.dataset.label_values[np.argmax(preds, axis=1)]
-        tn, fp, fn, tp = confusion_matrix(targets, preds).ravel()
-        percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
-                                         round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+            # Insert false columns for ignored labels
+            for l_ind, label_value in enumerate(val_loader.dataset.label_values):
+                if label_value in val_loader.dataset.ignored_labels:
+                    probs = np.insert(probs, l_ind, 0, axis=1)
 
-        f1 = f1_score(targets, preds)
-        keepIoU, discardIoU = jaccard_score(targets, preds, average=None)
-        mIoU = jaccard_score(targets, preds, average='macro')
-        accuracy = accuracy_score(targets, preds)
+            # Predicted labels
+            preds = val_loader.dataset.label_values[np.argmax(probs, axis=1)]
+
+            # Confusions
+            Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
+
         t3 = time.time()
 
-        new_best_mIoU = False
-        if mIoU > self.best_val_mIoU:
-            self.best_val_mIoU = mIoU
-            new_best_mIoU = True
-        # # Sum all confusions
-        # C = np.sum(Confs, axis=0).astype(np.float32)
-        #
-        # # Remove ignored labels from confusions
-        # for l_ind, label_value in reversed(list(enumerate(val_loader.dataset.label_values))):
-        #     if label_value in val_loader.dataset.ignored_labels:
-        #         C = np.delete(C, l_ind, axis=0)
-        #         C = np.delete(C, l_ind, axis=1)
-        #
-        # # Balance with real validation proportions
-        # # Multiply actual_neg (top row) and actual_pos by proportion in dataset. CHECK I have no idea why this is here
-        # C *= np.expand_dims(self.val_proportions / (np.sum(C, axis=1) + 1e-6), 1)
+        # Sum all confusions
+        C = np.sum(Confs, axis=0).astype(np.float32)
+
+        # Remove ignored labels from confusions
+        for l_ind, label_value in reversed(list(enumerate(val_loader.dataset.label_values))):
+            if label_value in val_loader.dataset.ignored_labels:
+                C = np.delete(C, l_ind, axis=0)
+                C = np.delete(C, l_ind, axis=1)
+
+        # Balance with real validation proportions
+        C *= np.expand_dims(self.val_proportions / (np.sum(C, axis=1) + 1e-6), 1)
 
         t4 = time.time()
 
         # Objects IoU
-        # IoUs, _f1 = IoU_from_confusions(C, calculate_f1=True)
+        IoUs = IoU_from_confusions(C)
+
         t5 = time.time()
 
-        # Saving (optional)
+        # Saving (optionnal)
         if config.saving:
 
             # Name of saving file
@@ -545,9 +530,9 @@ class ModelTrainer:
 
             # Line to write:
             line = ''
-            for IoU in [keepIoU, discardIoU]:
+            for IoU in IoUs:
                 line += '{:.3f} '.format(IoU)
-            # line = line + f'{f1}' + '\n'
+            line = line + '\n'
 
             # Write in file
             if exists(test_file):
@@ -558,84 +543,211 @@ class ModelTrainer:
                     text_file.write(line)
 
             # Save potentials
-            if val_loader.dataset.use_potentials:
-                pot_path = join(config.saving_path, 'potentials')
-                if not exists(pot_path):
-                    makedirs(pot_path)
-                files = val_loader.dataset.files
-                for i, file_path in enumerate(files):
-                    pot_points = np.array(val_loader.dataset.pot_trees[i].data, copy=False)
-                    cloud_name = file_path.split('/')[-1]
-                    pot_name = join(pot_path, cloud_name)
-                    pots = val_loader.dataset.potentials[i].numpy().astype(np.float32)
-                    write_ply(pot_name,
-                              [pot_points.astype(np.float32), pots],
-                              ['x', 'y', 'z', 'pots'])
+            pot_path = join(config.saving_path, 'potentials')
+            if not exists(pot_path):
+                makedirs(pot_path)
+            files = val_loader.dataset.files
+            for i, file_path in enumerate(files):
+                pot_points = np.array(val_loader.dataset.pot_trees[i].data, copy=False)
+                cloud_name = file_path.split('/')[-1]
+                pot_name = join(pot_path, cloud_name)
+                pots = val_loader.dataset.potentials[i].numpy().astype(np.float32)
+                write_ply(pot_name,
+                          [pot_points.astype(np.float32), pots],
+                          ['x', 'y', 'z', 'pots'])
 
         t6 = time.time()
 
         # Print instance mean
-        print('{:s} mean IoU = {:.1f}%, F1 = {:.1f}%'.format(config.dataset, mIoU*100, f1*100))
-        wandb.log({'Validation/TN': tn,
-                   'Validation/FP': fp,
-                   'Validation/FN': fn,
-                   'Validation/TP': tp,
-                   'Validation/category-TP': percentage_category_confusion[0],
-                   'Validation/category-FP': percentage_category_confusion[1],
-                   'Validation/category-FN': percentage_category_confusion[2],
-                   'Validation/category-TN': percentage_category_confusion[3],
-                   'Validation/F1': f1,
-                   'Validation/accuracy': accuracy,
-                   'Validation/mIoU': mIoU,
-                   })
+        mIoU = 100 * np.mean(IoUs)
+        print('{:s} mean IoU = {:.1f}%'.format(config.dataset, mIoU))
 
-        def gather_validation_save_data():
-            # Get points
-            points = val_loader.dataset.load_evaluation_points(file_path)
-
-            # Get probs on our own ply points
-            sub_probs = self.validation_probs[i]
-
-            # Insert false columns for ignored labels
-            for l_ind, label_value in enumerate(val_loader.dataset.label_values):
-                if label_value in val_loader.dataset.ignored_labels:
-                    sub_probs = np.insert(sub_probs, l_ind, 0, axis=1)
-
-            # Get the predicted labels
-            sub_preds = val_loader.dataset.label_values[np.argmax(sub_probs, axis=1).astype(np.int32)]
-
-            # Reproject preds on the evaluations points
-            preds = (sub_preds[val_loader.dataset.test_proj[i]]).astype(np.int32)
-
-            # Path of saved validation file
-            cloud_name = file_path.split('/')[-1]
-            val_name = join(val_path, cloud_name)
-
-            # Save file
-            labels = val_loader.dataset.validation_labels[i].astype(np.int32)
-
-            return val_name, points, preds, labels
-
-        # Save predicted cloud occasionally NOTE this is where we save the validation results occasionally
-        if config.saving and (self.epoch + 1) % config.checkpoint_gap == 0 or new_best_mIoU:
+        # Save predicted cloud occasionally
+        if config.saving and (self.epoch + 1) % config.checkpoint_gap == 0:
             val_path = join(config.saving_path, 'val_preds_{:d}'.format(self.epoch + 1))
             if not exists(val_path):
                 makedirs(val_path)
             files = val_loader.dataset.files
             for i, file_path in enumerate(files):
-                val_name, points, preds, labels = gather_validation_save_data()
-                if (self.epoch + 1) % config.checkpoint_gap == 0:
-                    write_ply(val_name,
-                              [points, preds, labels],
-                              ['x', 'y', 'z', 'preds', 'class'])
-                if new_best_mIoU:
-                    write_ply(val_name, # TODO Check how to fix this correctly
-                              [points, preds, labels],
-                              ['x', 'y', 'z', 'preds', 'class'])
-        #         TODO Active Learning
-        #         Need to output points, preds, targets, variance, and features.
-        #         Variance must be normalised [-1,1]
-        #         Variances and Features must be aggregated into cells.
+
+                # Get points
+                points = val_loader.dataset.load_evaluation_points(file_path)
+
+                # Get probs on our own ply points
+                sub_probs = self.validation_probs[i]
+
+                # Insert false columns for ignored labels
+                for l_ind, label_value in enumerate(val_loader.dataset.label_values):
+                    if label_value in val_loader.dataset.ignored_labels:
+                        sub_probs = np.insert(sub_probs, l_ind, 0, axis=1)
+
+                # Get the predicted labels
+                sub_preds = val_loader.dataset.label_values[np.argmax(sub_probs, axis=1).astype(np.int32)]
+
+                # Reproject preds on the evaluations points
+                preds = (sub_preds[val_loader.dataset.test_proj[i]]).astype(np.int32)
+
+                # Path of saved validation file
+                cloud_name = file_path.split('/')[-1]
+                val_name = join(val_path, cloud_name)
+
+                # Save file
+                labels = val_loader.dataset.validation_labels[i].astype(np.int32)
+                write_ply(val_name,
+                          [points, preds, labels],
+                          ['x', 'y', 'z', 'preds', 'class'])
+
+        # # # Confusions for our subparts of validation set
+        # # Confs = np.zeros((len(predictions), nc_tot, nc_tot), dtype=np.int32)
+        # # for i, (probs, truth) in enumerate(zip(predictions, targets)):
+        # #
+        # #     # Insert false columns for ignored labels
+        # #     for l_ind, label_value in enumerate(val_loader.dataset.label_values):
+        # #         if label_value in val_loader.dataset.ignored_labels:
+        # #             probs = np.insert(probs, l_ind, 0, axis=1)
+        # #
+        # #     # Predicted labels
+        # #     preds = val_loader.dataset.label_values[np.argmax(probs, axis=1)]
+        # #
+        # #     # Confusions
+        # #     Confs[i, :, :] = fast_confusion(truth, preds, val_loader.dataset.label_values).astype(np.int32)
+        #
+        # # Convert ground truth and prediction labels
+        # targets = np.hstack(targets)
+        # preds = np.vstack(predictions)
+        # preds = val_loader.dataset.label_values[np.argmax(preds, axis=1)]
+        # tn, fp, fn, tp = confusion_matrix(targets, preds).ravel()
+        # percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+        #                                  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+        #
+        # f1 = f1_score(targets, preds)
+        # keepIoU, discardIoU = jaccard_score(targets, preds, average=None)
+        # mIoU = jaccard_score(targets, preds, average='macro')
+        # accuracy = accuracy_score(targets, preds)
+        # t3 = time.time()
+        #
+        # new_best_mIoU = False
+        # if mIoU > self.best_val_mIoU:
+        #     self.best_val_mIoU = mIoU
+        #     new_best_mIoU = True
+        # # # Sum all confusions
+        # # C = np.sum(Confs, axis=0).astype(np.float32)
+        # #
+        # # # Remove ignored labels from confusions
+        # # for l_ind, label_value in reversed(list(enumerate(val_loader.dataset.label_values))):
+        # #     if label_value in val_loader.dataset.ignored_labels:
+        # #         C = np.delete(C, l_ind, axis=0)
+        # #         C = np.delete(C, l_ind, axis=1)
+        # #
+        # # # Balance with real validation proportions
+        # # # Multiply actual_neg (top row) and actual_pos by proportion in dataset. CHECK I have no idea why this is here
+        # # C *= np.expand_dims(self.val_proportions / (np.sum(C, axis=1) + 1e-6), 1)
+        #
+        # t4 = time.time()
+        #
+        # # Objects IoU
+        # # IoUs, _f1 = IoU_from_confusions(C, calculate_f1=True)
+        # t5 = time.time()
+        #
+        # # Saving (optional)
+        # if config.saving:
+        #
+        #     # Name of saving file
+        #     test_file = join(config.saving_path, 'val_IoUs.txt')
+        #
+        #     # Line to write:
+        #     line = ''
+        #     for IoU in [keepIoU, discardIoU]:
+        #         line += '{:.3f} '.format(IoU)
+        #     # line = line + f'{f1}' + '\n'
+        #
+        #     # Write in file
+        #     if exists(test_file):
+        #         with open(test_file, "a") as text_file:
+        #             text_file.write(line)
+        #     else:
+        #         with open(test_file, "w") as text_file:
+        #             text_file.write(line)
+        #
+        #     # Save potentials
+        #     if val_loader.dataset.use_potentials:
+        #         pot_path = join(config.saving_path, 'potentials')
+        #         if not exists(pot_path):
+        #             makedirs(pot_path)
+        #         files = val_loader.dataset.files
+        #         for i, file_path in enumerate(files):
+        #             pot_points = np.array(val_loader.dataset.pot_trees[i].data, copy=False)
+        #             cloud_name = file_path.split('/')[-1]
+        #             pot_name = join(pot_path, cloud_name)
+        #             pots = val_loader.dataset.potentials[i].numpy().astype(np.float32)
+        #             write_ply(pot_name,
+        #                       [pot_points.astype(np.float32), pots],
+        #                       ['x', 'y', 'z', 'pots'])
+        #
+        # t6 = time.time()
+        #
+        # # Print instance mean
+        # print('{:s} mean IoU = {:.1f}%, F1 = {:.1f}%'.format(config.dataset, mIoU*100, f1*100))
+        # wandb.log({'Validation/TN': tn,
+        #            'Validation/FP': fp,
+        #            'Validation/FN': fn,
+        #            'Validation/TP': tp,
+        #            'Validation/category-TP': percentage_category_confusion[0],
+        #            'Validation/category-FP': percentage_category_confusion[1],
+        #            'Validation/category-FN': percentage_category_confusion[2],
+        #            'Validation/category-TN': percentage_category_confusion[3],
+        #            'Validation/F1': f1,
+        #            'Validation/accuracy': accuracy,
+        #            'Validation/mIoU': mIoU,
+        #            })
+        #
+        # def gather_validation_save_data():
+        #     # Get points
+        #     points = val_loader.dataset.load_evaluation_points(file_path)
+        #
+        #     # Get probs on our own ply points
+        #     sub_probs = self.validation_probs[i]
+        #
+        #     # Insert false columns for ignored labels
+        #     for l_ind, label_value in enumerate(val_loader.dataset.label_values):
+        #         if label_value in val_loader.dataset.ignored_labels:
+        #             sub_probs = np.insert(sub_probs, l_ind, 0, axis=1)
+        #
+        #     # Get the predicted labels
+        #     sub_preds = val_loader.dataset.label_values[np.argmax(sub_probs, axis=1).astype(np.int32)]
+        #
+        #     # Reproject preds on the evaluations points
+        #     preds = (sub_preds[val_loader.dataset.test_proj[i]]).astype(np.int32)
+        #
+        #     # Path of saved validation file
+        #     cloud_name = file_path.split('/')[-1]
+        #     val_name = join(val_path, cloud_name)
+        #
+        #     # Save file
+        #     labels = val_loader.dataset.validation_labels[i].astype(np.int32)
+        #
+        #     return val_name, points, preds, labels
+        #
+        # # Save predicted cloud occasionally NOTE this is where we save the validation results occasionally
+        # if config.saving and (self.epoch + 1) % config.checkpoint_gap == 0 or new_best_mIoU:
+        #     val_path = join(config.saving_path, 'val_preds_{:d}'.format(self.epoch + 1))
+        #     if not exists(val_path):
+        #         makedirs(val_path)
+        #     files = val_loader.dataset.files
+        #     for i, file_path in enumerate(files):
+        #         val_name, points, preds, labels = gather_validation_save_data()
+        #         if (self.epoch + 1) % config.checkpoint_gap == 0:
+        #             write_ply(val_name,
+        #                       [points, preds, labels],
+        #                       ['x', 'y', 'z', 'preds', 'class'])
+        #         if new_best_mIoU:
+        #             write_ply(val_name, # TODO Check how to fix this correctly
+        #                       [points, preds, labels],
+        #                       ['x', 'y', 'z', 'preds', 'class'])
+        # #         TODO Active Learning
+        # #         Need to output points, preds, targets, variance, and features.
+        # #         Variance must be normalised [-1,1]
+        # #         Variances and Features must be aggregated into cells.
 
         # Display timings
         t7 = time.time()
