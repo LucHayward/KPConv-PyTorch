@@ -34,7 +34,7 @@ echo "#!/bin/sh
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=10 --gres=gpu:a100-2g-10gb:1
 #SBATCH --time=12:00:00
-#SBATCH --job-name=\"${dataset}_${split}\"
+#SBATCH --job-name=\"${dataset}_${split}-s3dis\"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
 #SBATCH -e slurm-${dataset}_${split}-s3dis.err

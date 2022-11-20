@@ -4,7 +4,7 @@
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=10 --gres=gpu:a100-2g-10gb:1
 #SBATCH --time=12:00:00
-#SBATCH --job-name="Piazza_2.5%"
+#SBATCH --job-name="Piazza_2.5%-s3dis"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
 #SBATCH -e slurm-Piazza_2.5%-s3dis.err
