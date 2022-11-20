@@ -7,6 +7,8 @@
 #SBATCH --job-name="Montelupo_50%"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
+#SBATCH -e slurm-Montelupo_50%.err
+#SBATCH -o slurm-Montelupo_50%.out
 
 CUDA_VISIBLE_DEVICES=$(ncvd)
 

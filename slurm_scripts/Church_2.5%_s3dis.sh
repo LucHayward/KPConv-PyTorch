@@ -7,6 +7,8 @@
 #SBATCH --job-name="Church_2.5%"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
+#SBATCH -e slurm-Church_2.5%-s3dis.err
+#SBATCH -o slurm-Church_2.5%-s3dis.out
 
 CUDA_VISIBLE_DEVICES=$(ncvd)
 

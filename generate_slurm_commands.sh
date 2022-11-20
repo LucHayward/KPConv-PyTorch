@@ -16,6 +16,8 @@ echo "#!/bin/sh
 #SBATCH --job-name=\"${dataset}_${split}\"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
+#SBATCH -e slurm-${dataset}_${split}.err
+#SBATCH -o slurm-${dataset}_${split}.out
 
 CUDA_VISIBLE_DEVICES=\$(ncvd)
 
@@ -35,6 +37,8 @@ echo "#!/bin/sh
 #SBATCH --job-name=\"${dataset}_${split}\"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
+#SBATCH -e slurm-${dataset}_${split}-s3dis.err
+#SBATCH -o slurm-${dataset}_${split}-s3dis.out
 
 CUDA_VISIBLE_DEVICES=\$(ncvd)
 

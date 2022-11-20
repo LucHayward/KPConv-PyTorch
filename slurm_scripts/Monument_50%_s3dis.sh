@@ -7,6 +7,8 @@
 #SBATCH --job-name="Monument_50%"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
+#SBATCH -e slurm-Monument_50%-s3dis.err
+#SBATCH -o slurm-Monument_50%-s3dis.out
 
 CUDA_VISIBLE_DEVICES=$(ncvd)
 

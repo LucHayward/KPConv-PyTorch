@@ -679,7 +679,7 @@ class MastersDataset(PointCloudDataset):
                 data = np.load(file_path).astype(np.float32)
                 points = data[:, :3]
                 intensity = data[:, 3].reshape(-1,1) # Expected as a 2D array
-                labels = data[:, 4].astype(np.int32)
+                labels = data[:, -1].astype(np.int32)
 
                 # Subsample cloud
                 sub_points, sub_intensity, sub_labels = grid_subsampling(points,
@@ -1244,7 +1244,7 @@ class MastersSampler(Sampler):
 
                 plt.show()
 
-                a = 1 / 0
+                # a = 1 / 0
 
             # Use collected neighbor histogram to get neighbors limit
             cumsum = np.cumsum(neighb_hists.T, axis=0)

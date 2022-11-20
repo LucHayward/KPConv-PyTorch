@@ -65,7 +65,7 @@ class MastersConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 10
+    input_threads = 0
 
     # Active Learning
     active_learning = False
@@ -270,7 +270,7 @@ def define_wandb_metrics():
 if __name__ == '__main__':
     # Initialise wandb
     os.environ["WANDB_MODE"] = "dryrun"
-    wandb.init(project="kpconv", name="5%Non-Deformable")
+    wandb.init(project="kpconv", name=f"{sys.argv[2]}")
     wandb.run.log_code("./train_Masters.py")
     define_wandb_metrics()
 
@@ -340,8 +340,8 @@ if __name__ == '__main__':
         config.dataset_folder = f"Data/PatrickData/{sys.argv[2]}/{sys.argv[3]}"
 
     # Initialize datasets
-    training_dataset = MastersDataset(config, set='train', use_potentials=False)  # Don't use potentials if imbalanced
-    test_dataset = MastersDataset(config, set='validate', use_potentials=True)
+    training_dataset = MastersDataset(config, set='train', use_potentials=False)  # Don't use potentials if imbalanced # https://github.com/HuguesTHOMAS/KPConv-PyTorch/issues/2
+    test_dataset = MastersDataset(config, set='validate', use_potentials=True)  # It is better to use potentials here to ensure the entire scene is seen https://github.com/HuguesTHOMAS/KPConv-PyTorch/issues/72
     print(f"{training_dataset.use_potentials=}\n{test_dataset.use_potentials=}")
     class_weights, _ = np.histogram(training_dataset.input_labels, np.arange(training_dataset.label_values.max() + 2))
     class_weights = class_weights / np.sum(class_weights)
