@@ -336,8 +336,10 @@ if __name__ == '__main__':
     # Get path from argument if given
     if len(sys.argv) > 1:
         config.saving_path = f"results/{sys.argv[1]}"
-    if len(sys.argv) > 2:
-        config.dataset_folder = f"Data/PatrickData/{sys.argv[2]}/{sys.argv[3]}"
+        if len(sys.argv) == 5:
+            config.saving_path = f"results/{sys.argv[1]}_{sys.argv[-1]}"
+        if len(sys.argv) > 2:
+            config.dataset_folder = f"Data/PatrickData/{sys.argv[2]}/{sys.argv[3]}"
 
     # Initialize datasets
     training_dataset = MastersDataset(config, set='train', use_potentials=False)  # Don't use potentials if imbalanced # https://github.com/HuguesTHOMAS/KPConv-PyTorch/issues/2

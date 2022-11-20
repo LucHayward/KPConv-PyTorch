@@ -25,7 +25,7 @@ module load python/miniconda3-py39
 source activate kpconv
 
 cd KPConv-PyTorch
-python3 train_Masters.py ${dataset}_${split} ${dataset} ${split} s3dis-xyz
+python3 train_Masters.py ${dataset}_${split} ${dataset} ${split}
 " > slurm_scripts/${dataset}_${split}.sh
 
 echo "#!/bin/sh
@@ -46,7 +46,7 @@ module load python/miniconda3-py39
 source activate kpconv
 
 cd KPConv-PyTorch
-python3 train_Masters.py ${dataset}_${split} ${dataset} ${split}
+python3 train_Masters.py ${dataset}_${split} ${dataset} ${split} s3dis-xyz
 " > slurm_scripts/${dataset}_${split}_'s3dis'.sh
   done
 done

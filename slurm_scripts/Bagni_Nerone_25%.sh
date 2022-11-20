@@ -16,5 +16,5 @@ module load python/miniconda3-py39
 source activate kpconv
 
 cd KPConv-PyTorch
-python3 train_Masters.py Bagni_Nerone_25% Bagni_Nerone 25% s3dis-xyz
+python3 train_Masters.py Bagni_Nerone_25% Bagni_Nerone 25%
 

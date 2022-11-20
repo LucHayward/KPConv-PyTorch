@@ -16,5 +16,5 @@ module load python/miniconda3-py39
 source activate kpconv
 
 cd KPConv-PyTorch
-python3 train_Masters.py Piazza_5% Piazza 5%
+python3 train_Masters.py Piazza_5% Piazza 5% s3dis-xyz
 

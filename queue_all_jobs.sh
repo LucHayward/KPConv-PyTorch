@@ -1,2 +1,6 @@
 echo "Queuing up all jobs"
-sbatch
+
+for file in KPConv-PyTorch/slurm_scripts/*.sh
+do
+  sbatch $file
+done
