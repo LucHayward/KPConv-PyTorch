@@ -24,6 +24,8 @@
 # Common libs
 import signal
 import os
+import sys
+
 import wandb
 
 # Dataset
@@ -54,7 +56,7 @@ class MastersConfig(Config):
     dataset = 'Masters'
 
     # Dataset folder
-    dataset_folder = '/home/luc/PycharmProjects/Pointnet_Pointnet2_pytorch/data/PatrickData/Church/MastersFormat/5%area_KPConv'
+    dataset_folder = ''
 
     # Number of classes in the dataset (This value is overwritten by dataset class when Initializating dataset).
     num_classes = None
@@ -63,7 +65,7 @@ class MastersConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 4
+    input_threads = 10
 
     # Active Learning
     active_learning = False
@@ -74,30 +76,30 @@ class MastersConfig(Config):
     #########################
 
     # # Define layers
-    # architecture = ['simple',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb',
-    #                 'resnetb',
-    #                 'resnetb_strided',
-    #                 'resnetb_deformable',
-    #                 'resnetb_deformable',
-    #                 'resnetb_deformable_strided',
-    #                 'resnetb_deformable',
-    #                 'resnetb_deformable',
-    #                 'nearest_upsample',
-    #                 'unary',
-    #                 'nearest_upsample',
-    #                 'unary',
-    #                 'nearest_upsample',
-    #                 'unary',
-    #                 'nearest_upsample',
-    #                 'unary']
+    architecture_deformable = ['simple',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb',
+                    'resnetb',
+                    'resnetb_strided',
+                    'resnetb_deformable',
+                    'resnetb_deformable',
+                    'resnetb_deformable_strided',
+                    'resnetb_deformable',
+                    'resnetb_deformable',
+                    'nearest_upsample',
+                    'unary',
+                    'nearest_upsample',
+                    'unary',
+                    'nearest_upsample',
+                    'unary',
+                    'nearest_upsample',
+                    'unary']
 
-    # Define layers
+    # Define layers (we use nondeformable because the author suggests this on github)
     architecture = ['simple',
                     'resnetb',
                     'resnetb_strided',
@@ -135,7 +137,7 @@ class MastersConfig(Config):
     # Reducing this on denser datasets allow shapes with finer details. Should also reduce in_radius to compensate.
     # Will be better on small objects but could be worse on very big objects. If you want big objects and have very
     # dense data consider that it may not be useful and a higher first_subsampling_dl and in_radius could be used.
-    first_subsampling_dl = 0.03
+    first_subsampling_dl = 0.02
 
     # Radius of convolution/neighbourhood (for rigid KPConv) in "number grid cell". (2.5 is the standard value)
     # e.g. 2.5*0.03 = 7.5cm
@@ -155,7 +157,7 @@ class MastersConfig(Config):
 
     # Choice of input features
     first_features_dim = 128
-    in_features_dim = 3
+    in_features_dim = 1
 
     # Can the network learn modulations
     modulated = False
@@ -245,7 +247,6 @@ def define_wandb_metrics():
     wandb.define_metric('Train/inner_output_loss', summary='min')
     wandb.define_metric('Train/inner_sum_loss', summary='min')
 
-
     # Validation Classification metrics
     wandb.define_metric('validation/TP', summary='max')
     wandb.define_metric('validation/FP', summary='min')
@@ -265,13 +266,14 @@ def define_wandb_metrics():
     # wandb.define_metric('Validation/eval_point_avg_class_accuracy', summary='max')
     # wandb.define_metric('Validation/eval_mean_loss', summary='min')
 
+
 if __name__ == '__main__':
     # Initialise wandb
     os.environ["WANDB_MODE"] = "dryrun"
     wandb.init(project="kpconv", name="5%Non-Deformable")
     wandb.run.log_code("./train_Masters.py")
     define_wandb_metrics()
-    
+
     ############################
     # Initialize the environment
     ############################
@@ -289,6 +291,8 @@ if __name__ == '__main__':
     # Choose here if you want to start training from a previous snapshot (None for new training)
     # previous_training_path = 'Log_2020-03-19_19-53-27'
     previous_training_path = ''
+    if len(sys.argv) == 5:
+        previous_training_path = sys.argv[-1]
     if len(previous_training_path) > 0:
         print("Starting from ", previous_training_path)
 
@@ -302,7 +306,10 @@ if __name__ == '__main__':
 
         # Find which snapshot to restore
         if chkp_idx is None:
-            chosen_chkp = 'current_chkp.tar'
+            if previous_training_path == 's3dis-xyz':
+                chosen_chkp = 's3dis-xyz.pth'
+            else:
+                chosen_chkp = 'current_chkp.tar'
         else:
             chosen_chkp = np.sort(chkps)[chkp_idx]
         chosen_chkp = os.path.join('results', previous_training_path, 'checkpoints', chosen_chkp)
@@ -320,13 +327,18 @@ if __name__ == '__main__':
 
     # Initialize configuration class
     config = MastersConfig()
-    if previous_training_path:
-        config.load(os.path.join('results', previous_training_path))
-        config.saving_path = None
+    if len(previous_training_path) > 0:
+        if previous_training_path != 's3dis-xyz':
+            config.load(os.path.join('results', previous_training_path))
+            config.saving_path = None
+        else:
+            config.architecture = config.architecture_deformable
 
     # Get path from argument if given
     if len(sys.argv) > 1:
-        config.saving_path = sys.argv[1]
+        config.saving_path = f"results/{sys.argv[1]}"
+    if len(sys.argv) > 2:
+        config.dataset_folder = f"Data/PatrickData/{sys.argv[2]}/{sys.argv[3]}"
 
     # Initialize datasets
     training_dataset = MastersDataset(config, set='train', use_potentials=False)  # Don't use potentials if imbalanced
@@ -393,7 +405,7 @@ if __name__ == '__main__':
 
     pprint.pprint(config_dict)
     # Define a trainer class
-    trainer = ModelTrainer(net, config, chkp_path=chosen_chkp)
+    trainer = ModelTrainer(net, config, chkp_path=chosen_chkp, finetune=(previous_training_path == "s3dis-xyz"))
     print('Done in {:.1f}s\n'.format(time.time() - t1))
 
     print('\nStart training')

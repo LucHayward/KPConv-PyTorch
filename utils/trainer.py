@@ -106,6 +106,8 @@ class ModelTrainer:
         if (chkp_path is not None):
             if finetune:
                 checkpoint = torch.load(chkp_path)
+                if 'criterion.weight' not in checkpoint['model_state_dict'].keys():
+                    checkpoint['model_state_dict']['criterion.weight'] = net.criterion.weight
                 net.load_state_dict(checkpoint['model_state_dict'])
                 net.train()
                 print("Model restored and ready for finetuning.")
