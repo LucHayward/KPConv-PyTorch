@@ -23,7 +23,7 @@ echo "#!/bin/sh
 CUDA_VISIBLE_DEVICES=\$(ncvd)
 
 module load python/miniconda3-py39
-source activate kpconv
+source activate /scratch/hywluc001/conda-envs/kpconv
 
 cd KPConv-PyTorch
 python3 train_Masters.py ${dataset}_${split} ${dataset} ${split}
@@ -44,7 +44,7 @@ echo "#!/bin/sh
 CUDA_VISIBLE_DEVICES=\$(ncvd)
 
 module load python/miniconda3-py39
-source activate kpconv
+source activate /scratch/hywluc001/conda-envs/kpconv
 
 cd KPConv-PyTorch
 python3 train_Masters.py ${dataset}_${split} ${dataset} ${split} s3dis-xyz

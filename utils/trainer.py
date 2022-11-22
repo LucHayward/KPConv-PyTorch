@@ -261,13 +261,13 @@ class ModelTrainer:
                                                   net.reg_loss,
                                                   acc, f1,
                                                   t[-1] - t0))
-                wandb.log({'Train/epoch': self.epoch,
-                           'Train/step': self.step,
-                           'Train/inner_output_loss': net.output_loss,
-                           'Train/inner_reg_loss': net.reg_loss,
-                           'Train/inner_sum_loss': loss.item(),
-                           'Train/inner_accuracy': acc,
-                           'Train/inner_f1': f1})
+                # wandb.log({'Train/epoch': self.epoch,
+                #            'Train/step': self.step,
+                #            'Train/inner_output_loss': net.output_loss,
+                #            'Train/inner_reg_loss': net.reg_loss,
+                #            'Train/inner_sum_loss': loss.item(),
+                #            'Train/inner_accuracy': acc,
+                #            'Train/inner_f1': f1})
                 self.step += 1
 
             ##############

@@ -13,7 +13,7 @@
 CUDA_VISIBLE_DEVICES=$(ncvd)
 
 module load python/miniconda3-py39
-source activate kpconv
+source activate /scratch/hywluc001/conda-envs/kpconv
 
 cd KPConv-PyTorch
 python3 train_Masters.py Piazza_2.5% Piazza 2.5% s3dis-xyz

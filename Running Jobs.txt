@@ -10,3 +10,17 @@ Done 3g | Church_2.5%.sh
 Done 3g | Church_2.5%_s3dis.sh
 Running 2g | Church_5%.sh
 Pending 2g | Church_5%_s3dis.sh
+Running mk | Church_25%pascal.sh
+Running mk | Church_25%_s3dispascal.sh
+Running mk | Church_50%pascal.sh
+Running mk | Church_50%_s3dispascal.sh
+Running mk | Lunnahoja_2.5%pascal.sh
+Running mk | Lunnahoja_2.5%s2dispascal.sh
+Running mk | Lunnahoja_5%pascal.sh
+Running mk | Lunnahoja_5%s2dispascal.sh
+Running mk | Lunnahoja_25%pascal.sh
+Running mk | Lunnahoja_25%s2dispascal.sh
+Running mk | Lunnahoja_50%pascal.sh
+Running mk | Lunnahoja_50%s2dispascal.sh
+Pending mk | Montelupo_5%.sh
+Pending mk | Montelupo_5%_s3dis.sh
