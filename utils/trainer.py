@@ -344,9 +344,9 @@ class ModelTrainer:
                 # Save current state of the network (for restoring purposes)
                 checkpoint_path = join(checkpoint_directory, 'current_chkp.tar')
                 torch.save(save_dict, checkpoint_path)
-                # results, new_best_mIoU = _format_results(results) # lbls, preds, counts
-                # np.save(join(checkpoint_directory, 'current_chkp_results'), results)
-                # # wandb.save(checkpoint_path)
+                results, new_best_mIoU = _format_results(results) # lbls, preds, counts
+                np.save(join(checkpoint_directory, 'current_chkp_results'), results)
+                # wandb.save(checkpoint_path)
 
                 # Save checkpoints occasionally
                 if (self.epoch + 1) % config.checkpoint_gap == 0:

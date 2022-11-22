@@ -269,8 +269,9 @@ def define_wandb_metrics():
 
 if __name__ == '__main__':
     # Initialise wandb
-    os.environ["WANDB_MODE"] = "dryrun"
-    wandb.init(project="kpconv", name=f"{sys.argv[2]}")
+    # os.environ["WANDB_MODE"] = "dryrun"
+    name = sys.argv[1] if len(sys.argv) < 5 else sys.argv[1]+'_'+sys.argv[-1]
+    wandb.init(project="kpconv", name=name)
     wandb.run.log_code("./train_Masters.py")
     define_wandb_metrics()
 
@@ -415,5 +416,6 @@ if __name__ == '__main__':
     # Training
     trainer.train(net, training_loader, test_loader, config)
 
-    print('Forcing exit now')
-    os.kill(os.getpid(), signal.SIGINT)
+    # print('Forcing exit now')
+    # os.kill(os.getpid(), signal.SIGINT)
+    print("Reached end of training script")

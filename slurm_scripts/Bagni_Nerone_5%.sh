@@ -2,7 +2,7 @@
 
 #SBATCH --account=a100free
 #SBATCH --partition=a100
-#SBATCH --nodes=1 --ntasks=10 --gres=gpu:a100-2g-10gb:1
+#SBATCH --nodes=1 --ntasks=10 --gres=gpu:a100-3g-20gb:1
 #SBATCH --time=12:00:00
 #SBATCH --job-name="Bagni_Nerone_5%"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
