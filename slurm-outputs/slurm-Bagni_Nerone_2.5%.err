@@ -1,0 +1,51 @@
+wandb: ERROR Failed to sample metric: Not Supported
+wandb: Tracking run with wandb version 0.13.5
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+/home/hywluc001/.conda/envs/kpconv/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1599: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no true nor predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, "true nor predicted", "F-score is", len(true_sum))
+/home/hywluc001/.conda/envs/kpconv/lib/python3.10/site-packages/sklearn/metrics/_classification.py:1599: UndefinedMetricWarning: F-score is ill-defined and being set to 0.0 due to no true nor predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, "true nor predicted", "F-score is", len(true_sum))
+Traceback (most recent call last):
+  File "/home/hywluc001/KPConv-PyTorch/train_Masters.py", line 419, in <module>
+    os.kill(os.getpid(), signal.SIGINT)
+KeyboardInterrupt
+wandb: Waiting for W&B process to finish... (failed 255).
+wandb: 
+wandb: Run history:
+wandb:             Train/epoch ▁▁▁▂▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:    Train/inner_accuracy ▆▅█▃██▆█▇██▇▇██▇█▅██▇▇▇████▇█▆▇█▇██▇█▁▇█
+wandb:          Train/inner_f1 █▇▁▇██▇██████████▇███████████▁███████▄▃█
+wandb: Train/inner_output_loss ▄▄▁█▂▁▄▁▃▁▁▃▂▂▁▃▁▅▂▂▃▃▂▂▂▁▂▂▂▂▂▂▂▁▂▁▁█▃▁
+wandb:    Train/inner_reg_loss ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:    Train/inner_sum_loss ▄▄▁█▂▁▄▁▃▁▁▃▂▂▁▃▁▅▂▂▃▃▂▂▂▁▂▂▂▂▂▂▂▁▂▁▁█▃▁
+wandb:              Train/step ▁▁▂▂▃▃▄▄▄▅▅▆▆▆▇▇█▁▁▂▂▃▃▄▄▄▅▅▆▆▆▇▇██▁▂▂▃▃
+wandb:           Validation/F1 ▂▂▁▄▃█▄▃▃▁▅▂▄▁▃▅▆▄▁▁▁▃▄▃▂▃▃▂▁▂▃▃▄▂▂▃▂▆▃▄
+wandb:           Validation/FN ▆▆█▅▇▂▅▆▇▇▅█▆▇▆▅▄▆█▇█▆▅▆█▆▇▆▇▇▅▆▆▇▇▆▇▁▆▇
+wandb:           Validation/FP ▁▁▁▁▁▂▁▁▁▁▂▁▁▁▁▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁
+wandb:           Validation/TN ██▅▆▅▆█▇▇▆▆▅▇▇▇▆▇▇▆▇▆█▇▇▅▆▆▇▆▇██▆▇▆█▇▁▆▆
+wandb:           Validation/TP ▁▁▁▃▂▆▂▂▂▁▃▂▃▁▂▃▅▃▁▁▁▂▂▂▂▂▂▂▁▂▂▂▃▂▂▁▁█▂▃
+wandb:     Validation/accuracy ▅▄▁▄▂█▅▅▄▃▅▂▅▃▄▅▇▅▂▃▂▅▅▄▁▄▃▄▂▃▅▅▄▃▃▅▃▁▄▃
+wandb:  Validation/category-FN ███▆▇▃▆▇▇█▆█▆█▇▆▄▆███▇▇▇█▇▇▇██▇▇▆▇▇▇█▁▇▇
+wandb:  Validation/category-FP ▁▁▁▁▁▂▁▁▁▁▂▁▁▁▁▁▂▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁
+wandb:  Validation/category-TN █████▇████▇█████▇████████████████████▁██
+wandb:  Validation/category-TP ▁▁▁▃▂▆▃▂▂▁▃▁▃▁▂▃▅▃▁▁▁▂▂▂▁▂▂▂▁▁▂▂▃▂▂▂▁█▂▂
+wandb:         Validation/mIoU ▃▂▁▄▂█▄▃▃▂▄▂▄▂▃▄▆▄▂▂▁▃▄▃▁▃▃▃▂▂▄▄▄▂▂▃▂▁▃▃
+wandb: 
+wandb: Run summary:
+wandb:            Train/epoch 98
+wandb:   Train/inner_accuracy 0.96312
+wandb:         Train/inner_f1 0.92798
+wandb:             Train/step 499
+wandb:          Validation/FN 305957
+wandb:          Validation/FP 4134
+wandb:          Validation/TN 408709
+wandb:          Validation/TP 145666
+wandb: Validation/category-FN 0.677
+wandb: Validation/category-FP 0.01
+wandb: Validation/category-TN 0.99
+wandb: Validation/category-TP 0.323
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync /home/hywluc001/KPConv-PyTorch/wandb/offline-run-20221120_191923-1t6h1ew8
+wandb: Find logs at: ./wandb/offline-run-20221120_191923-1t6h1ew8/logs

@@ -1,4 +1,4 @@
-Done 2g | Bagni_Nerone_2.5%.sh
+Missing 2g | Bagni_Nerone_2.5%.sh
 Done 2g | Bagni_Nerone_2.5%_s3dis.sh
 Done 3g | Bagni_Nerone_5%.sh
 Done 3g | Bagni_Nerone_5%_s3dis.sh
@@ -6,21 +6,49 @@ Done 2g | Bagni_Nerone_25%.s
 Done 2g | Bagni_Nerone_25%_s3dis.sh
 Done 2g | Bagni_Nerone_50%.sh
 Done 2g | Bagni_Nerone_50%_s3dis.sh
+
 Done 3g | Church_2.5%.sh
 Done 3g | Church_2.5%_s3dis.sh
-Running 2g | Church_5%.sh
-Pending 2g | Church_5%_s3dis.sh
-Running mk | Church_25%pascal.sh
-Running mk | Church_25%_s3dispascal.sh
-Running mk | Church_50%pascal.sh
-Running mk | Church_50%_s3dispascal.sh
-Running mk | Lunnahoja_2.5%pascal.sh
-Running mk | Lunnahoja_2.5%s2dispascal.sh
-Running mk | Lunnahoja_5%pascal.sh
-Running mk | Lunnahoja_5%s2dispascal.sh
-Running mk | Lunnahoja_25%pascal.sh
-Running mk | Lunnahoja_25%s2dispascal.sh
-Running mk | Lunnahoja_50%pascal.sh
-Running mk | Lunnahoja_50%s2dispascal.sh
-Pending mk | Montelupo_5%.sh
-Pending mk | Montelupo_5%_s3dis.sh
+Done 2g | Church_5%.sh
+Done 2g | Church_5%_s3dis.sh
+Done mk | Church_25%pascal.sh
+Done mk | Church_25%_s3dispascal.sh
+Done mk | Church_50%pascal.sh
+Done mk | Church_50%_s3dispascal.sh
+
+Done mk | Lunnahoja_2.5%pascal.sh
+Done mk | Lunnahoja_2.5%s2dispascal.sh
+Done mk | Lunnahoja_5%pascal.sh
+Done mk | Lunnahoja_5%s2dispascal.sh
+Done mk | Lunnahoja_25%pascal.sh
+Done mk | Lunnahoja_25%s2dispascal.sh
+Done mk | Lunnahoja_50%pascal.sh
+Done mk | Lunnahoja_50%s2dispascal.sh
+
+Done mk | Montelupo_2.5%.sh
+Done mk | Montelupo_2.5%_s3dis.sh
+Done mk | Montelupo_5%.sh
+Done mk | Montelupo_5%_s3dis.sh
+Done mk | Montelupo_25%.sh
+Done mk | Montelupo_25%_s3dis.sh
+Done mk | Montelupo_50%.sh
+Done mk | Montelupo_50%_s3dis.sh
+
+Done mk | Monument_2.5%.sh
+Done mk | Monument_2.5%_s3dis.sh
+Done mk | Monument_5%.sh
+Done mk | Monument_5%_s3dis.sh
+Done mk | Monument_25%.sh
+Done mk | Monument_25%_s3dis.sh
+Done mk | Monument_50%.sh
+Done mk | Monument_50%_s3dis.sh
+
+Done mk | Piazza_2.5%.sh
+Done mk | Piazza_2.5%_s3dis.sh
+Done mk | Piazza_5%.sh
+Done mk | Piazza_5%_s3dis.sh
+Done mk | Piazza_25%.sh
+Done mk | Piazza_25%_s3dis.sh
+Done mk | Piazza_50%.sh
+Done mk | Piazza_50%_s3dis.sh
+
