@@ -156,7 +156,7 @@ class ModelTrainer:
                 np.save('batch_points', result)
             return result
 
-        if config.saving:
+        if False and config.saving:
             # Training log file
             with open(join(config.saving_path, 'training.txt'), "w") as file:
                 file.write('epochs steps out_loss offset_loss train_accuracy, train_f1, time\n')
@@ -190,179 +190,180 @@ class ModelTrainer:
 
             self.step = 0
             results = []
-            for batch in training_loader:
-
-                # Check kill signal (running_PID.txt deleted)
-                if config.saving and not exists(PID_file):
-                    continue
-
-                ##################
-                # Processing batch
-                ##################
-
-                # New time
-                t = t[-1:]  # previous time
-                t += [time.time()]  # start time
-
-                if 'cuda' in self.device.type:
-                    batch.to(self.device)
-
-                # zero the parameter gradients
-                self.optimizer.zero_grad()
-
-                # Forward pass
-                outputs = net(batch, config)
-                loss = net.loss(outputs, batch.labels)
-                acc = net.accuracy(outputs, batch.labels)
-                f1 = net.f1(outputs, batch.labels)
-
-                # _save_batch_vis(batch,outputs)
-                results.append([batch.input_inds.detach().cpu().numpy(), batch.labels.detach().cpu().numpy(),
-                                torch.argmax(outputs.data, dim=1).cpu().numpy()])
-                t += [time.time()]  # Forward pass time
-
-                # Backward + optimize
-                loss.backward()
-
-                if config.grad_clip_norm > 0:
-                    # torch.nn.utils.clip_grad_norm_(net.parameters(), config.grad_clip_norm)
-                    torch.nn.utils.clip_grad_value_(net.parameters(), config.grad_clip_norm)
-                self.optimizer.step()
-
-                torch.cuda.empty_cache()
-                torch.cuda.synchronize(self.device)
-
-                t += [time.time()]  # backward pass time
-
-                # Average timing
-                if self.step < 2:
-                    mean_dt = np.array(t[1:]) - np.array(t[:-1])
-                else:
-                    mean_dt = 0.9 * mean_dt + 0.1 * (np.array(t[1:]) - np.array(t[:-1]))
-
-                # Console display (only one per second)
-                if (t[-1] - last_display) > 1.0:
-                    last_display = t[-1]
-                    message = 'e{:03d}-i{:04d} => L={:.3f} acc={:3.0f}% f1 = {:3.0f}% / t(ms): {:5.1f} {:5.1f} {:5.1f})'
-                    print(message.format(self.epoch, self.step,
-                                         loss.item(),
-                                         100 * acc, 100 * f1,
-                                         1000 * mean_dt[0],
-                                         1000 * mean_dt[1],
-                                         1000 * mean_dt[2]))
-
-                # Log file
-                if config.saving:
-                    with open(join(config.saving_path, 'training.txt'), "a") as file:
-                        message = '{:d} {:d} {:.3f} {:.3f} {:.3f} {:.3f} {:.3f}\n'
-                        file.write(message.format(self.epoch,
-                                                  self.step,
-                                                  net.output_loss,
-                                                  net.reg_loss,
-                                                  acc, f1,
-                                                  t[-1] - t0))
-                # wandb.log({'Train/epoch': self.epoch,
-                #            'Train/step': self.step,
-                #            'Train/inner_output_loss': net.output_loss,
-                #            'Train/inner_reg_loss': net.reg_loss,
-                #            'Train/inner_sum_loss': loss.item(),
-                #            'Train/inner_accuracy': acc,
-                #            'Train/inner_f1': f1})
-                self.step += 1
-
-            ##############
-            # End of epoch
-            ##############
-
-            # Check kill signal (running_PID.txt deleted)
-            if config.saving and not exists(PID_file):
-                break
-
-            # Update learning rate
-            if self.epoch in config.lr_decays:
-                for param_group in self.optimizer.param_groups:
-                    param_group['lr'] *= config.lr_decays[self.epoch]
-
-            # Update epoch
-            self.epoch += 1
-
-            def _format_results(results):
-                results = np.hstack(results)
-                argsort_idxs = results[0].argsort()
-                results = results[:, argsort_idxs]
-                # point_idxs for indexing into the tree (sorted unique indexes),
-                # unique_idxs to match up the labels/preds (idxs of results that create the unique array)
-                # inverse_idxs (idxs of point_idxs that reconstruct results)
-                point_idxs, unique_idxs, inverse_idxs, counts = np.unique(results[0], return_index=True,
-                                                                          return_inverse=True,
-                                                                          return_counts=True)
-
-                pts = training_loader.dataset.input_trees[0].data.base[point_idxs]
-                lbls = results[1, unique_idxs]
-                # prds = results[2, unique_idxs]
-
-                # TODO Voting (for idx in unique_idxs get
-                splt_res = np.split(results[2], np.cumsum(counts)[:-1])
-                pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
-
-                tn, fp, fn, tp = confusion_matrix(lbls, pred_votes).ravel()
-                percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
-                                                 round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
-                f1 = f1_score(lbls, pred_votes)
-                mIoU = jaccard_score(lbls, pred_votes, average='macro')
-                accuracy = accuracy_score(lbls, pred_votes)
-                print(f"Training merged results:\n"
-                      f"{f1=:.3f}\n"
-                      f"{mIoU=:.3f}\n"
-                      f"{accuracy=:.3f}\n")
-                wandb.log({'Train/epoch': self.epoch,
-                           'Train/TN': tn,
-                           'Train/FP': fp,
-                           'Train/FN': fn,
-                           'Train/FP': tp,
-                           'Train/category-TP': percentage_category_confusion[0],
-                           'Train/category-FP': percentage_category_confusion[1],
-                           'Train/category-FN': percentage_category_confusion[2],
-                           'Train/category-TN': percentage_category_confusion[3],
-                           'Train/F1': f1,
-                           'Train/mIoU': mIoU,
-                           'Train/accuracy': accuracy})
-                if mIoU > self.best_train_mIoU:
-                    self.best_train_mIoU = mIoU
-                    return np.column_stack([pts, lbls, pred_votes, counts]), True
-                else:
-                    return np.column_stack([pts, lbls, pred_votes, counts]), False
-
-            # Saving
-            if config.saving:
-                # Get current state dict
-                save_dict = {'epoch': self.epoch,
-                             'model_state_dict': net.state_dict(),
-                             'optimizer_state_dict': self.optimizer.state_dict(),
-                             'saving_path': config.saving_path}
-
-                # Save current state of the network (for restoring purposes)
-                checkpoint_path = join(checkpoint_directory, 'current_chkp.tar')
-                torch.save(save_dict, checkpoint_path)
-                results, new_best_mIoU = _format_results(results) # lbls, preds, counts
-                np.save(join(checkpoint_directory, 'current_chkp_results'), results)
-                # wandb.save(checkpoint_path)
-
-                # Save checkpoints occasionally
-                if (self.epoch + 1) % config.checkpoint_gap == 0:
-                    checkpoint_path = join(checkpoint_directory, 'chkp_{:04d}.tar'.format(self.epoch + 1))
-                    torch.save(save_dict, checkpoint_path)
-                #     np.save(join(checkpoint_directory, f'chkp_{self.epoch+1}_results'), results)
-                #     # wandb.save(checkpoint_path)
-                # if new_best_mIoU:
-                #     checkpoint_path = join(checkpoint_directory, 'best_train_chkp.tar'.format(self.epoch + 1))
-                #     torch.save(save_dict, checkpoint_path)
-                #     np.save(join(checkpoint_directory, f'best_train_chkp_results'), results)
+            # for batch in training_loader:
+            #
+            #     # Check kill signal (running_PID.txt deleted)
+            #     if config.saving and not exists(PID_file):
+            #         continue
+            #
+            #     ##################
+            #     # Processing batch
+            #     ##################
+            #
+            #     # New time
+            #     t = t[-1:]  # previous time
+            #     t += [time.time()]  # start time
+            #
+            #     if 'cuda' in self.device.type:
+            #         batch.to(self.device)
+            #
+            #     # zero the parameter gradients
+            #     self.optimizer.zero_grad()
+            #
+            #     # Forward pass
+            #     outputs = net(batch, config)
+            #     loss = net.loss(outputs, batch.labels)
+            #     acc = net.accuracy(outputs, batch.labels)
+            #     f1 = net.f1(outputs, batch.labels)
+            #
+            #     # _save_batch_vis(batch,outputs)
+            #     results.append([batch.input_inds.detach().cpu().numpy(), batch.labels.detach().cpu().numpy(),
+            #                     torch.argmax(outputs.data, dim=1).cpu().numpy()])
+            #     t += [time.time()]  # Forward pass time
+            #
+            #     # Backward + optimize
+            #     loss.backward()
+            #
+            #     if config.grad_clip_norm > 0:
+            #         # torch.nn.utils.clip_grad_norm_(net.parameters(), config.grad_clip_norm)
+            #         torch.nn.utils.clip_grad_value_(net.parameters(), config.grad_clip_norm)
+            #     self.optimizer.step()
+            #
+            #     torch.cuda.empty_cache()
+            #     torch.cuda.synchronize(self.device)
+            #
+            #     t += [time.time()]  # backward pass time
+            #
+            #     # Average timing
+            #     if self.step < 2:
+            #         mean_dt = np.array(t[1:]) - np.array(t[:-1])
+            #     else:
+            #         mean_dt = 0.9 * mean_dt + 0.1 * (np.array(t[1:]) - np.array(t[:-1]))
+            #
+            #     # Console display (only one per second)
+            #     if (t[-1] - last_display) > 1.0:
+            #         last_display = t[-1]
+            #         message = 'e{:03d}-i{:04d} => L={:.3f} acc={:3.0f}% f1 = {:3.0f}% / t(ms): {:5.1f} {:5.1f} {:5.1f})'
+            #         print(message.format(self.epoch, self.step,
+            #                              loss.item(),
+            #                              100 * acc, 100 * f1,
+            #                              1000 * mean_dt[0],
+            #                              1000 * mean_dt[1],
+            #                              1000 * mean_dt[2]))
+            #
+            #     # Log file
+            #     if config.saving:
+            #         with open(join(config.saving_path, 'training.txt'), "a") as file:
+            #             message = '{:d} {:d} {:.3f} {:.3f} {:.3f} {:.3f} {:.3f}\n'
+            #             file.write(message.format(self.epoch,
+            #                                       self.step,
+            #                                       net.output_loss,
+            #                                       net.reg_loss,
+            #                                       acc, f1,
+            #                                       t[-1] - t0))
+            #     #wandb.log({'Train/epoch': self.epoch,
+            #     #           'Train/step': self.step,
+            #     #           'Train/inner_output_loss': net.output_loss,
+            #     #           'Train/inner_reg_loss': net.reg_loss,
+            #     #           'Train/inner_sum_loss': loss.item(),
+            #     #           'Train/inner_accuracy': acc,
+            #      #          'Train/inner_f1': f1})
+            #     self.step += 1
+            #
+            # ##############
+            # # End of epoch
+            # ##############
+            #
+            # # Check kill signal (running_PID.txt deleted)
+            # if config.saving and not exists(PID_file):
+            #     break
+            #
+            # # Update learning rate
+            # if self.epoch in config.lr_decays:
+            #     for param_group in self.optimizer.param_groups:
+            #         param_group['lr'] *= config.lr_decays[self.epoch]
+            #
+            # # Update epoch
+            # self.epoch += 1
+            #
+            # def _format_results(results):
+            #     results = np.hstack(results)
+            #     argsort_idxs = results[0].argsort()
+            #     results = results[:, argsort_idxs]
+            #     # point_idxs for indexing into the tree (sorted unique indexes),
+            #     # unique_idxs to match up the labels/preds (idxs of results that create the unique array)
+            #     # inverse_idxs (idxs of point_idxs that reconstruct results)
+            #     point_idxs, unique_idxs, inverse_idxs, counts = np.unique(results[0], return_index=True,
+            #                                                               return_inverse=True,
+            #                                                               return_counts=True)
+            #
+            #     pts = training_loader.dataset.input_trees[0].data.base[point_idxs]
+            #     lbls = results[1, unique_idxs]
+            #     # prds = results[2, unique_idxs]
+            #
+            #     # TODO Voting (for idx in unique_idxs get
+            #     splt_res = np.split(results[2], np.cumsum(counts)[:-1])
+            #     pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+            #
+            #     tn, fp, fn, tp = confusion_matrix(lbls, pred_votes).ravel()
+            #     percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+            #                                      round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+            #     f1 = f1_score(lbls, pred_votes)
+            #     mIoU = jaccard_score(lbls, pred_votes, average='macro')
+            #     accuracy = accuracy_score(lbls, pred_votes)
+            #     print(f"Training merged results:\n"
+            #           f"{f1=:.3f}\n"
+            #           f"{mIoU=:.3f}\n"
+            #           f"{accuracy=:.3f}\n")
+            #     wandb.log({'Train/epoch': self.epoch,
+            #                'Train/TN': tn,
+            #                'Train/FP': fp,
+            #                'Train/FN': fn,
+            #                'Train/FP': tp,
+            #                'Train/category-TP': percentage_category_confusion[0],
+            #                'Train/category-FP': percentage_category_confusion[1],
+            #                'Train/category-FN': percentage_category_confusion[2],
+            #                'Train/category-TN': percentage_category_confusion[3],
+            #                'Train/F1': f1,
+            #                'Train/mIoU': mIoU,
+            #                'Train/accuracy': accuracy})
+            #     if mIoU > self.best_train_mIoU:
+            #         self.best_train_mIoU = mIoU
+            #         return np.column_stack([pts, lbls, pred_votes, counts]), True
+            #     else:
+            #         return np.column_stack([pts, lbls, pred_votes, counts]), False
+            #
+            # # Saving
+            # if config.saving:
+            #     # Get current state dict
+            #     save_dict = {'epoch': self.epoch,
+            #                  'model_state_dict': net.state_dict(),
+            #                  'optimizer_state_dict': self.optimizer.state_dict(),
+            #                  'saving_path': config.saving_path}
+            #
+            #     # Save current state of the network (for restoring purposes)
+            #     checkpoint_path = join(checkpoint_directory, 'current_chkp.tar')
+            #     torch.save(save_dict, checkpoint_path)
+            #     results, new_best_mIoU = _format_results(results) # lbls, preds, counts
+            #     np.save(join(checkpoint_directory, 'current_chkp_results'), results)
+            #     # wandb.save(checkpoint_path)
+            #
+            #     # Save checkpoints occasionally
+            #     if (self.epoch + 1) % config.checkpoint_gap == 0:
+            #         checkpoint_path = join(checkpoint_directory, 'chkp_{:04d}.tar'.format(self.epoch + 1))
+            #         torch.save(save_dict, checkpoint_path)
+            #     #     np.save(join(checkpoint_directory, f'chkp_{self.epoch+1}_results'), results)
+            #     #     # wandb.save(checkpoint_path)
+            #     # if new_best_mIoU:
+            #     #     checkpoint_path = join(checkpoint_directory, 'best_train_chkp.tar'.format(self.epoch + 1))
+            #     #     torch.save(save_dict, checkpoint_path)
+            #     #     np.save(join(checkpoint_directory, f'best_train_chkp_results'), results)
 
             # Validation
             net.eval()
             self.validation(net, val_loader, config)
             net.train()
+            exit(0)
 
         print('Finished Training')
         return
@@ -650,7 +651,7 @@ class ModelTrainer:
         t5 = time.time()
 
         # Saving (optional)
-        if config.saving:
+        if False and config.saving:
 
             # Name of saving file
             test_file = join(config.saving_path, 'val_IoUs.txt')
@@ -729,7 +730,7 @@ class ModelTrainer:
             return val_name, points, preds, labels
 
         # Save predicted cloud occasionally NOTE this is where we save the validation results occasionally
-        if config.saving and (self.epoch + 1) % config.checkpoint_gap == 0 or new_best_mIoU:
+        if False and config.saving and (self.epoch + 1) % config.checkpoint_gap == 0 or new_best_mIoU:
             val_path = join(config.saving_path, 'val_preds_{:d}'.format(self.epoch + 1))
             if not exists(val_path):
                 makedirs(val_path)
@@ -764,3 +765,4 @@ class ModelTrainer:
             print('\n************************\n')
 
         return
+

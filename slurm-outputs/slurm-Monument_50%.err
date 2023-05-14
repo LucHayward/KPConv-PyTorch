@@ -1,0 +1,333 @@
+wandb: Currently logged in as: luchayward. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.13.5
+wandb: Run data is saved locally in /home/hywluc001/KPConv-PyTorch/wandb/run-20221123_142613-1z7dfzif
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Monument_50%
+wandb: ⭐️ View project at https://wandb.ai/luchayward/kpconv
+wandb: 🚀 View run at https://wandb.ai/luchayward/kpconv/runs/1z7dfzif
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:620: RuntimeWarning: invalid value encountered in long_scalars
+  percentage_category_confusion = [round(tp / (tp + fn), 3), round(fp / (tn + fp), 3),
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:621: RuntimeWarning: invalid value encountered in long_scalars
+  round(fn / (tp + fn), 3), round(tn / (tn + fp), 3)]
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+/home/hywluc001/KPConv-PyTorch/utils/trainer.py:306: FutureWarning: Unlike other reduction functions (e.g. `skew`, `kurtosis`), the default behavior of `mode` typically preserves the axis it acts along. In SciPy 1.11.0, this behavior will change: the default value of `keepdims` will become False, the `axis` over which the statistic is taken will be eliminated, and the value None will no longer be accepted. Set `keepdims` to True or False to avoid this warning.
+  pred_votes = np.array([mode(s)[0] for s in splt_res]).squeeze()
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:               Train/F1 ▁▇▇▇▇▇███▇██▇▇▇██████▆█████████████▇████
+wandb:               Train/FN █▂▂▂▂▂▁▁▁▂▁▁▂▂▂▁▁▁▁▁▁▃▁▁▁▁▁▁▁▁▁▁▁▁▁▂▁▁▁▁
+wandb:               Train/FP ▁▇▆▇▆▇▇█▇▇▇▇▇▇▇█▇█▇▇▇▅██▇█▇███▇▇▇██▇██▇█
+wandb:               Train/TN █▆▆▇▅▇▇▆▆▅▆▄▃▇▄▁▆▆▇▆▆▃▆▇▁▅▆▆▃▆▅▇▆▃▅▇▇▇▆▆
+wandb:         Train/accuracy ▁▇▇▇▇▇███▇██▇▇▇██████▆█████████████▇████
+wandb:      Train/category-FN █▂▂▂▂▂▁▁▁▂▁▁▂▂▂▁▁▁▁▁▁▃▁▁▁▁▁▁▁▁▁▁▁▁▁▂▁▁▁▁
+wandb:      Train/category-FP ▁▃▃▃▆▃▃▃▃▃▃▆▆▃▆█▃▃▃▃▃▆▃▃█▃▃▃▆▃▆▃▃▆▃▃▃▃▃▃
+wandb:      Train/category-TN █▆▆▆▃▆▆▆▆▆▆▃▃▆▃▁▆▆▆▆▆▃▆▆▁▆▆▆▃▆▃▆▆▃▆▆▆▆▆▆
+wandb:      Train/category-TP ▁▇▇▇▇▇███▇██▇▇▇██████▆█████████████▇████
+wandb:            Train/epoch ▁▁▁▁▂▂▂▂▂▃▃▃▃▃▃▄▄▄▄▄▅▅▅▅▅▅▆▆▆▆▆▇▇▇▇▇▇███
+wandb:             Train/mIoU ▁▆▅▆▆▆▇█▇▆▇▇▆▆▅▇▇▇▇█▇▅▇▇▇▇▇████▇█▇█▆█▇██
+wandb:          Validation/F1 ▇████▆█▆██▄███▇██▇██▁██▇██████▇█▂██▇████
+wandb:          Validation/FN ▃▁▁▁▁▃▁▄▁▁▆▁▁▁▂▁▁▂▁▁█▁▁▂▁▁▁▁▁▁▂▁▇▁▁▂▂▁▁▁
+wandb:          Validation/FP ▁▄▁▅▅▁▃▁▆▅▆▁▁▅▃▃▅▆▅▃█▁▃▃▄▇▃▃▅▁▅▃▇▁█▁▁▅▃▃
+wandb:          Validation/TN ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁█▁▁▁▁
+wandb:          Validation/TP ▆▇█▇▇▅█▅██▃███▇▇█▇▇█▁▇▇▇█▇▇▇██▇▇▂▇█▆▇██▇
+wandb:    Validation/accuracy ▆████▆█▅██▃███▇██▇██▁██▇██████▇█▂██▇▇███
+wandb: Validation/category-FN ▃▁▁▁▁▃▁▄▁▁▆▁▁▁▂▁▁▂▁▁█▁▁▂▁▁▁▁▁▁▂▁▇▁▁▂▂▁▁▁
+wandb: Validation/category-FP  █ ██ █ ███  ████████ ███████ ███ █▁ ███
+wandb: Validation/category-TN  ▁ ▁▁ ▁ ▁▁▁  ▁▁▁▁▁▁▁▁ ▁▁▁▁▁▁▁ ▁▁▁ ▁█ ▁▁▁
+wandb: Validation/category-TP ▆████▆█▅██▃███▇██▇██▁██▇██████▇█▂██▇▇███
+wandb:        Validation/mIoU ▆████▆█▅██▃███▇██▇██▁██▇██████▇█▂██▇▇███
+wandb: 
+wandb: Run summary:
+wandb:            Train/epoch 99
+wandb:          Validation/FN 53
+wandb:          Validation/FP 2
+wandb:          Validation/TN 0
+wandb:          Validation/TP 974920
+wandb: Validation/category-FN 0.0
+wandb: Validation/category-FP 1.0
+wandb: Validation/category-TN 0.0
+wandb: Validation/category-TP 1.0
+wandb: 
+wandb: Synced Monument_50%: https://wandb.ai/luchayward/kpconv/runs/1z7dfzif
+wandb: Synced 7 W&B file(s), 0 media file(s), 0 artifact file(s) and 1 other file(s)
+wandb: Find logs at: ./wandb/run-20221123_142613-1z7dfzif/logs
