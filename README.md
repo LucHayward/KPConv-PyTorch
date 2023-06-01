@@ -1,7 +1,10 @@
 
 ![Intro figure](https://github.com/HuguesTHOMAS/KPConv-PyTorch/blob/master/doc/Github_intro.png)
 
-Created by Hugues THOMAS
+Forked from Hugues THOMAS
+This repo contains the changes needed during the course of my Masters research.
+The primary changes are the addition of code specific to the training and data loading for my datasets, 
+and scripts for running my experiments on a SLURM controlled cluster. 
 
 ## Introduction
 
