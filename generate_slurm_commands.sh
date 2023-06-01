@@ -1,8 +1,7 @@
 #!/bin/bash
 
 cd /home/luc/PycharmProjects/KPConv-PyTorch
-#for dataset in Church Lunnahoja Monument Bagni_Nerone Montelupo Piazza
-for dataset in Lunnahoja Monument Montelupo Piazza
+for dataset in Church Lunnahoja Monument Bagni_Nerone Montelupo Piazza
 do
   for split in "2.5%" "5%" "25%" "50%"
   do
@@ -23,7 +22,7 @@ echo "#!/bin/sh
 CUDA_VISIBLE_DEVICES=\$(ncvd)
 
 module load python/miniconda3-py39
-source activate /scratch/hywluc001/conda-envs/kpconv
+source activate kpconv
 
 cd KPConv-PyTorch
 python3 train_Masters.py ${dataset}_${split} ${dataset} ${split}
@@ -35,7 +34,7 @@ echo "#!/bin/sh
 #SBATCH --partition=a100
 #SBATCH --nodes=1 --ntasks=10 --gres=gpu:a100-2g-10gb:1
 #SBATCH --time=12:00:00
-#SBATCH --job-name=\"${dataset}_${split}-s3dis\"
+#SBATCH --job-name=\"${dataset}_${split}\"
 #SBATCH --mail-user=hywluc001@myuct.ac.za
 #SBATCH --mail-type=ALL
 #SBATCH -e slurm-${dataset}_${split}-s3dis.err
@@ -44,51 +43,11 @@ echo "#!/bin/sh
 CUDA_VISIBLE_DEVICES=\$(ncvd)
 
 module load python/miniconda3-py39
-source activate /scratch/hywluc001/conda-envs/kpconv
+source activate kpconv
 
 cd KPConv-PyTorch
 python3 train_Masters.py ${dataset}_${split} ${dataset} ${split} s3dis-xyz
 " > slurm_scripts/${dataset}_${split}_'s3dis'.sh
-
-
-echo "#!/bin/sh
-
-#SBATCH --account=gpumk
-#SBATCH --partition=gpumk
-#SBATCH --nodes=1 --ntasks=8 --gres=gpu:pascal:1
-#SBATCH --time=12:00:00
-#SBATCH --job-name=\"${dataset}_${split}\"
-#SBATCH --mail-user=hywluc001@myuct.ac.za
-#SBATCH --mail-type=ALL
-#SBATCH -e slurm-${dataset}_${split}.err
-#SBATCH -o slurm-${dataset}_${split}.out
-
-module load python/miniconda3-py39
-source activate /scratch/hywluc001/conda-envs/kpconv-pascal
-
-cd KPConv-PyTorch
-python3 train_Masters.py ${dataset}_${split} ${dataset} ${split}
-" > slurm_scripts/${dataset}_${split}'pascal'.sh
-
-echo "#!/bin/sh
-
-#SBATCH --account=gpumk
-#SBATCH --partition=gpumk
-#SBATCH --nodes=1 --ntasks=8 --gres=gpu:pascal:1
-#SBATCH --time=12:00:00
-#SBATCH --job-name=\"${dataset}_${split}-s3dis\"
-#SBATCH --mail-user=hywluc001@myuct.ac.za
-#SBATCH --mail-type=ALL
-#SBATCH -e slurm-${dataset}_${split}-s3dis.err
-#SBATCH -o slurm-${dataset}_${split}-s3dis.out
-
-module load python/miniconda3-py39
-source activate /scratch/hywluc001/conda-envs/kpconv-pascal
-
-cd KPConv-PyTorch
-python3 train_Masters.py ${dataset}_${split} ${dataset} ${split} s3dis-xyz
-" > slurm_scripts/${dataset}_${split}_'s3dispascal'.sh
-
   done
 done
 

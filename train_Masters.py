@@ -25,6 +25,7 @@
 import signal
 import os
 import sys
+from pathlib import Path
 
 import wandb
 
@@ -65,7 +66,7 @@ class MastersConfig(Config):
     dataset_task = ''
 
     # Number of CPU threads for the input pipeline
-    input_threads = 0
+    input_threads = 8
 
     # Active Learning
     active_learning = False
@@ -265,13 +266,14 @@ def define_wandb_metrics():
     wandb.define_metric('Validation/accuracy', summary='max')
     # wandb.define_metric('Validation/eval_point_avg_class_accuracy', summary='max')
     # wandb.define_metric('Validation/eval_mean_loss', summary='min')
+    print("Wandb metrics defined")
 
 
 if __name__ == '__main__':
     # Initialise wandb
-    os.environ["WANDB_MODE"] = "dryrun"
-    name = sys.argv[1] if len(sys.argv) < 5 else sys.argv[1]+'_'+sys.argv[-1]
-    wandb.init(project="kpconv", name=name)
+    # os.environ["WANDB_MODE"] = "dryrun"
+    name = (sys.argv[1] if len(sys.argv) < 5 else sys.argv[1]+'_'+sys.argv[-1])+"-50%Validation"
+    wandb.init(project="kpconv", name=name, group="50%Validation")
     wandb.run.log_code("./train_Masters.py")
     define_wandb_metrics()
 
@@ -309,10 +311,15 @@ if __name__ == '__main__':
             if previous_training_path == 's3dis-xyz':
                 chosen_chkp = 's3dis-xyz.pth'
             else:
-                chosen_chkp = 'current_chkp.tar'
+                # chosen_chkp = 'current_chkp.tar'
+                chosen_chkp = 'chkp_0050.tar'
         else:
             chosen_chkp = np.sort(chkps)[chkp_idx]
         chosen_chkp = os.path.join('results', previous_training_path, 'checkpoints', chosen_chkp)
+        if not Path(chosen_chkp).exists():
+            chosen_chkp = np.sort(chkps)[-1]
+            chosen_chkp = os.path.join('results', previous_training_path, 'checkpoints', chosen_chkp)
+            print("Restoring from ", chosen_chkp)
 
     else:
         chosen_chkp = None
@@ -337,8 +344,8 @@ if __name__ == '__main__':
     # Get path from argument if given
     if len(sys.argv) > 1:
         config.saving_path = f"results/{sys.argv[1]}"
-        if len(sys.argv) == 5:
-            config.saving_path = f"results/{sys.argv[1]}_{sys.argv[-1]}"
+        # if len(sys.argv) == 5:
+        #     config.saving_path = f"results/{sys.argv[1]}_{sys.argv[-1]}"
         if len(sys.argv) > 2:
             config.dataset_folder = f"Data/PatrickData/{sys.argv[2]}/{sys.argv[3]}"
 
@@ -413,7 +420,7 @@ if __name__ == '__main__':
     print('\nStart training')
     print('**************')
 
-    # Training (takes 4 min to get here)
+    # Training
     trainer.train(net, training_loader, test_loader, config)
 
     # print('Forcing exit now')
